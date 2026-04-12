@@ -6,359 +6,162 @@
 <title>Hamilton Deco · Caja</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #FAF7F2;
-    --warm-white: #FFFFFF;
-    --charcoal: #1C1C1E;
-    --dark: #2C2C2E;
-    --mid: #6C6C70;
-    --light: #AEAEB2;
-    --border: #E5E0D8;
-    --gold: #B8860B;
-    --gold-light: #D4A017;
-    --green: #2E7D52;
-    --green-light: #E8F5EE;
-    --red: #C0392B;
-    --red-light: #FDECEA;
-    --blue: #1A4A7A;
-    --blue-light: #EAF0F8;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
-    --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--charcoal);
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-
-  /* HEADER */
-  header {
-    background: var(--charcoal);
-    padding: 18px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: var(--shadow-md);
-  }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    color: var(--cream);
-    font-size: 22px;
-    letter-spacing: 0.5px;
-  }
-  header span {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--gold-light);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  #clock {
-    color: var(--light);
-    font-size: 13px;
-    font-weight: 300;
-  }
-
-  /* LAYOUT */
-  .container { max-width: 820px; margin: 0 auto; padding: 24px 16px; }
-
-  /* SECTION CARD */
-  .card {
-    background: var(--warm-white);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
-  }
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    color: var(--dark);
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-title .icon {
-    width: 28px; height: 28px;
-    background: var(--cream);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-  }
-
-  /* FORM ELEMENTS */
-  .field { margin-bottom: 14px; }
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--mid);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
-  }
-  input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select {
-    width: 100%;
-    padding: 13px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    color: var(--charcoal);
-    background: var(--cream);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-appearance: none;
-  }
-  input:focus, select:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(184,134,11,0.12);
-    background: white;
-  }
-  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  /* PAYMENT METHODS */
-  .payment-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  .pay-btn {
-    padding: 14px 10px;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--mid);
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.18s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    line-height: 1.2;
-  }
-  .pay-btn .pay-icon { font-size: 20px; }
-  .pay-btn:active { transform: scale(0.97); }
-  .pay-btn.selected {
-    border-color: var(--gold);
-    background: #FDF8EE;
-    color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(184,134,11,0.10);
-  }
-
-  /* CUOTAS */
-  #cuotas-section {
-    margin-top: 12px;
-    display: none;
-    animation: fadeIn 0.2s ease;
-  }
-  #cuotas-section.visible { display: block; }
-
-  /* FACTURA TOGGLE */
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    background: var(--cream);
-    border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border);
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  .toggle-row.active { border-color: var(--gold); background: #FDF8EE; }
-  .toggle-label { font-size: 15px; font-weight: 500; }
-  .toggle-switch {
-    width: 48px; height: 28px;
-    background: var(--light);
-    border-radius: 20px;
-    position: relative;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
-  .toggle-switch::after {
-    content: '';
-    position: absolute;
-    width: 22px; height: 22px;
-    background: white;
-    border-radius: 50%;
-    top: 3px; left: 3px;
-    transition: transform 0.2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
-  .toggle-row.active .toggle-switch { background: var(--gold); }
-  .toggle-row.active .toggle-switch::after { transform: translateX(20px); }
-
-  #factura-fields {
-    display: none;
-    margin-top: 12px;
-    animation: fadeIn 0.2s ease;
-  }
-  #factura-fields.visible { display: block; }
-
-  /* ITEMS */
-  .item-row {
-    display: grid;
-    grid-template-columns: 50px 1fr 90px 90px 36px;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 10px;
-    animation: fadeIn 0.2s ease;
-  }
-  .item-row input {
-    padding: 11px 10px;
-    font-size: 15px;
-  }
-  .btn-remove {
-    width: 36px; height: 36px;
-    border: none;
-    background: var(--red-light);
-    color: var(--red);
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-    flex-shrink: 0;
-  }
-  .btn-remove:active { background: #f5c6c2; }
-
-  .items-header {
-    display: grid;
-    grid-template-columns: 50px 1fr 90px 90px 36px;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .items-header span {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--light);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-  }
-
-  .btn-add-item {
-    width: 100%;
-    padding: 12px;
-    border: 2px dashed var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--mid);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 4px;
-    transition: all 0.15s;
-  }
-  .btn-add-item:active { border-color: var(--gold); color: var(--gold); }
-
-  /* TOTAL */
-  .total-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--charcoal);
-    border-radius: var(--radius-sm);
-    padding: 18px 20px;
-    margin-top: 4px;
-  }
-  .total-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--light);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .total-amount {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: var(--gold-light);
-  }
-
-  /* SUBMIT */
-  .btn-submit {
-    width: 100%;
-    padding: 20px;
-    background: var(--charcoal);
-    color: var(--cream);
-    border: none;
-    border-radius: var(--radius);
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    margin-top: 8px;
-    box-shadow: var(--shadow-md);
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn-submit:active { transform: scale(0.99); box-shadow: var(--shadow-sm); }
-  .btn-submit.loading { opacity: 0.7; pointer-events: none; }
-  .btn-submit .btn-sub { display: block; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--gold-light); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-
-  /* SUCCESS MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    padding: 20px;
-  }
-  .modal-overlay.visible { display: flex; }
-  .modal {
-    background: white;
-    border-radius: var(--radius);
-    padding: 40px 32px;
-    text-align: center;
-    max-width: 360px;
-    width: 100%;
-    box-shadow: var(--shadow-lg);
-    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .modal .check { font-size: 56px; margin-bottom: 16px; }
-  .modal h2 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 8px; }
-  .modal p { color: var(--mid); font-size: 15px; margin-bottom: 8px; }
-  .modal .id-venta { font-size: 13px; color: var(--light); font-weight: 500; margin-bottom: 24px; }
-  .btn-nueva {
-    width: 100%;
-    padding: 16px;
-    background: var(--charcoal);
-    color: var(--cream);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pop
+:root{--cream:#FAF7F2;--warm-white:#FFFFFF;--charcoal:#1C1C1E;--dark:#2C2C2E;--mid:#6C6C70;--light:#AEAEB2;--border:#E5E0D8;--gold:#B8860B;--gold-light:#D4A017;--red:#C0392B;--red-light:#FDECEA;--blue:#1A4A7A;--blue-light:#EAF0F8;--shadow-sm:0 2px 8px rgba(0,0,0,0.06);--shadow-md:0 4px 20px rgba(0,0,0,0.10);--shadow-lg:0 8px 40px rgba(0,0,0,0.14);--radius:16px;--radius-sm:10px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;padding-bottom:40px}
+header{background:var(--charcoal);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-md)}
+header h1{font-family:'Playfair Display',serif;color:var(--cream);font-size:22px;letter-spacing:0.5px}
+header span{font-family:'DM Sans',sans-serif;color:var(--gold-light);font-size:13px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+#clock{color:var(--light);font-size:13px;font-weight:300}
+.container{max-width:820px;margin:0 auto;padding:24px 16px}
+.card{background:var(--warm-white);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.card-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--dark);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.card-title .icon{width:28px;height:28px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.field{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+input[type="text"],input[type="email"],input[type="tel"],input[type="number"],select{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:16px;color:var(--charcoal);background:var(--cream);outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,0.12);background:white}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.payment-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pay-btn{padding:14px 10px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--mid);cursor:pointer;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.2}
+.pay-btn .pay-icon{font-size:20px}
+.pay-btn:active{transform:scale(0.97)}
+.pay-btn.selected{border-color:var(--gold);background:#FDF8EE;color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,0.10)}
+#cuotas-section{margin-top:12px;display:none}
+#cuotas-section.visible{display:block}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--cream);border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer;transition:border-color 0.2s}
+.toggle-row.active{border-color:var(--gold);background:#FDF8EE}
+.toggle-label{font-size:15px;font-weight:500}
+.toggle-switch{width:48px;height:28px;background:var(--light);border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle-switch::after{content:'';position:absolute;width:22px;height:22px;background:white;border-radius:50%;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.toggle-row.active .toggle-switch{background:var(--gold)}
+.toggle-row.active .toggle-switch::after{transform:translateX(20px)}
+#factura-fields{display:none;margin-top:12px}
+#factura-fields.visible{display:block}
+.item-row{display:grid;grid-template-columns:50px 1fr 90px 90px 36px;gap:8px;align-items:center;margin-bottom:10px}
+.item-row input{padding:11px 10px;font-size:15px}
+.btn-remove{width:36px;height:36px;border:none;background:var(--red-light);color:var(--red);border-radius:8px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.items-header{display:grid;grid-template-columns:50px 1fr 90px 90px 36px;gap:8px;margin-bottom:8px}
+.items-header span{font-size:11px;font-weight:600;color:var(--light);text-transform:uppercase;letter-spacing:0.6px}
+.btn-add-item{width:100%;padding:12px;border:2px dashed var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--mid);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px}
+.total-bar{display:flex;align-items:center;justify-content:space-between;background:var(--charcoal);border-radius:var(--radius-sm);padding:18px 20px;margin-top:16px}
+.total-label{font-size:13px;font-weight:600;color:var(--light);text-transform:uppercase;letter-spacing:1px}
+.total-amount{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold-light)}
+.btn-submit{width:100%;padding:20px;background:var(--charcoal);color:var(--cream);border:none;border-radius:var(--radius);font-family:'Playfair Display',serif;font-size:20px;letter-spacing:0.5px;cursor:pointer;margin-top:8px;box-shadow:var(--shadow-md);transition:all 0.2s}
+.btn-submit:active{transform:scale(0.99)}
+.btn-submit.loading{opacity:0.7;pointer-events:none}
+.btn-submit .btn-sub{display:block;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
+.modal-overlay.visible{display:flex}
+.modal{background:white;border-radius:var(--radius);padding:40px 32px;text-align:center;max-width:360px;width:100%;box-shadow:var(--shadow-lg)}
+.modal .check{font-size:56px;margin-bottom:16px}
+.modal h2{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px}
+.modal p{color:var(--mid);font-size:15px;margin-bottom:8px}
+.modal .id-venta{font-size:13px;color:var(--light);font-weight:500;margin-bottom:24px}
+.btn-nueva{width:100%;padding:16px;background:var(--charcoal);color:var(--cream);border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer}
+.recibo-badge{background:var(--gold);color:white;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:0.5px}
+.config-note{background:var(--blue-light);border:1px solid #c2d7ee;border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;color:var(--blue);margin-bottom:16px;line-height:1.5}
+@media(max-width:480px){.row-2{grid-template-columns:1fr}.total-amount{font-size:24px}header h1{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Hamilton Deco</h1><span>Sistema de Caja</span></div>
+  <div id="clock"></div>
+</header>
+<div class="container">
+  <div class="config-note" id="config-note">⚙️ <strong>Modo demo activo.</strong> Los datos aún no se guardan en Google Sheets. <a href="#" onclick="document.getElementById('config-note').style.display='none';return false;" style="color:var(--blue);font-weight:600;">Entendido ✕</a></div>
+  <div class="card">
+    <div class="card-title"><div class="icon">🧾</div>Datos del Recibo<span class="recibo-badge" id="recibo-num">Nº —</span></div>
+    <div class="row-2">
+      <div class="field"><label>Fecha</label><input type="text" id="fecha" readonly style="background:#f5f5f5;color:var(--mid)"></div>
+      <div class="field"><label>Hora</label><input type="text" id="hora" readonly style="background:#f5f5f5;color:var(--mid)"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">👤</div>Datos del Cliente</div>
+    <div class="field"><label>Nombre completo</label><input type="text" id="cliente-nombre" placeholder="Nombre y apellido" autocomplete="off"></div>
+    <div class="row-2">
+      <div class="field"><label>Email <span style="color:var(--light);font-weight:400">(opcional)</span></label><input type="email" id="cliente-email" placeholder="email@ejemplo.com" autocomplete="off"></div>
+      <div class="field"><label>Teléfono <span style="color:var(--light);font-weight:400">(opcional)</span></label><input type="tel" id="cliente-tel" placeholder="341 000 0000" autocomplete="off"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">🪞</div>Detalle de Productos</div>
+    <div class="items-header"><span>Cant.</span><span>Descripción</span><span>P. Unit.</span><span>Subtotal</span><span></span></div>
+    <div id="items-container"></div>
+    <button class="btn-add-item" onclick="addItem()">+ Agregar producto</button>
+    <div class="total-bar"><span class="total-label">Total</span><span class="total-amount" id="total-display">$ 0</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">💳</div>Forma de Pago</div>
+    <div class="payment-grid">
+      <button class="pay-btn" onclick="selectPago(this,'EFECTIVO')"><span class="pay-icon">💵</span>Efectivo</button>
+      <button class="pay-btn" onclick="selectPago(this,'TRANSFERENCIA')"><span class="pay-icon">📲</span>Transferencia</button>
+      <button class="pay-btn" onclick="selectPago(this,'MERCADO_PAGO')"><span class="pay-icon">🔵</span>Mercado Pago</button>
+      <button class="pay-btn" onclick="selectPago(this,'VISA_DEBITO')"><span class="pay-icon">💳</span>Visa Débito</button>
+      <button class="pay-btn" onclick="selectPago(this,'MASTERCARD_DEBITO')"><span class="pay-icon">💳</span>Master Débito</button>
+      <button class="pay-btn" onclick="selectPago(this,'VISA_CREDITO')"><span class="pay-icon">💳</span>Visa Crédito</button>
+      <button class="pay-btn" onclick="selectPago(this,'MASTERCARD_CREDITO')"><span class="pay-icon">💳</span>Master Crédito</button>
+      <button class="pay-btn" onclick="selectPago(this,'DOLARES')"><span class="pay-icon">💲</span>Dólares</button>
+    </div>
+    <div id="cuotas-section">
+      <div class="field" style="margin-top:14px;margin-bottom:0"><label>Cantidad de cuotas</label>
+        <select id="cuotas"><option value="1">1 cuota (contado)</option><option value="3">3 cuotas</option><option value="6">6 cuotas</option><option value="12">12 cuotas</option><option value="18">18 cuotas</option><option value="24">24 cuotas</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">📄</div>Facturación ARCA</div>
+    <div class="toggle-row" id="factura-toggle" onclick="toggleFactura()"><span class="toggle-label">¿El cliente requiere factura?</span><div class="toggle-switch"></div></div>
+    <div id="factura-fields">
+      <div class="field" style="margin-top:14px"><label>CUIT / DNI</label><input type="text" id="cuit" placeholder="20-12345678-9" autocomplete="off"></div>
+      <div class="field"><label>Razón Social</label><input type="text" id="razon-social" placeholder="Nombre o empresa" autocomplete="off"></div>
+      <div class="field"><label>Enviar factura por</label><select id="envio-factura"><option value="EMAIL">Email</option><option value="WHATSAPP">WhatsApp</option><option value="AMBOS">Ambos</option></select></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">📝</div>Observaciones <span style="color:var(--light);font-size:12px;font-weight:400">(opcional)</span></div>
+    <div class="field" style="margin-bottom:0"><input type="text" id="observaciones" placeholder="Notas adicionales..."></div>
+  </div>
+  <button class="btn-submit" onclick="submitVenta()">Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span></button>
+</div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="check">✅</div>
+    <h2>¡Venta registrada!</h2>
+    <p id="modal-resumen"></p>
+    <div class="id-venta" id="modal-id"></div>
+    <button class="btn-nueva" onclick="nuevaVenta()">Nueva Venta</button>
+  </div>
+</div>
+<script>
+const SCRIPT_URL='TU_GOOGLE_APPS_SCRIPT_URL_AQUI';
+let pagoSeleccionado='',requiereFactura=false,itemCount=0;
+function updateClock(){const n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('fecha').value=n.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});document.getElementById('hora').value=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+setInterval(updateClock,1000);updateClock();
+function genReciboNum(){const s=parseInt(localStorage.getItem('hamilton_recibo_num')||'449');const n=s+1;localStorage.setItem('hamilton_recibo_num',n);document.getElementById('recibo-num').textContent='Nº '+String(n).padStart(6,'0');return String(n).padStart(6,'0')}
+let currentReciboNum=genReciboNum();
+function addItem(){itemCount++;const id='item-'+itemCount;const div=document.createElement('div');div.className='item-row';div.id=id;div.innerHTML=`<input type="number" min="1" value="1" id="${id}-cant" onchange="calcTotal()" style="text-align:center"><input type="text" placeholder="Descripción del producto" id="${id}-desc" autocomplete="off"><input type="number" min="0" placeholder="Precio" id="${id}-precio" oninput="calcTotal()"><input type="number" placeholder="0" id="${id}-sub" readonly style="background:#f5f5f5;color:var(--mid);text-align:right"><button class="btn-remove" onclick="removeItem('${id}')">×</button>`;document.getElementById('items-container').appendChild(div);setTimeout(()=>div.querySelector(`#${id}-desc`).focus(),50)}
+function removeItem(id){const el=document.getElementById(id);if(el){el.remove();calcTotal()}}
+function calcTotal(){let t=0;document.querySelectorAll('.item-row').forEach(r=>{const id=r.id;const c=parseFloat(document.getElementById(`${id}-cant`)?.value)||0;const p=parseFloat(document.getElementById(`${id}-precio`)?.value)||0;const s=c*p;const se=document.getElementById(`${id}-sub`);if(se)se.value=s>0?s.toLocaleString('es-AR'):'';t+=s});document.getElementById('total-display').textContent='$ '+t.toLocaleString('es-AR',{minimumFractionDigits:0});return t}
+function selectPago(btn,metodo){document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');pagoSeleccionado=metodo;const cs=document.getElementById('cuotas-section');if(metodo==='VISA_CREDITO'||metodo==='MASTERCARD_CREDITO'){cs.classList.add('visible')}else{cs.classList.remove('visible');document.getElementById('cuotas').value='1'}}
+function toggleFactura(){requiereFactura=!requiereFactura;document.getElementById('factura-toggle').classList.toggle('active',requiereFactura);document.getElementById('factura-fields').classList.toggle('visible',requiereFactura)}
+async function submitVenta(){
+  if(!document.getElementById('cliente-nombre').value.trim()){alert('Por favor ingresá el nombre del cliente.');return}
+  if(!pagoSeleccionado){alert('Por favor seleccioná la forma de pago.');return}
+  const items=[];let total=0;let validos=true;
+  document.querySelectorAll('.item-row').forEach(r=>{const id=r.id;const c=parseFloat(document.getElementById(`${id}-cant`)?.value)||0;const d=document.getElementById(`${id}-desc`)?.value.trim();const p=parseFloat(document.getElementById(`${id}-precio`)?.value)||0;if(!d||p===0){validos=false;return}const s=c*p;items.push({cant:c,desc:d,precio:p,sub:s});total+=s});
+  if(items.length===0){alert('Agregá al menos un producto.');return}
+  if(!validos){alert('Completá descripción y precio de todos los productos.');return}
+  const now=new Date();
+  const payload={ID_VENTA:`HAM-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${currentReciboNum}`,RECIBO_NUMERO:currentReciboNum,FECHA:document.getElementById('fecha').value,HORA:document.getElementById('hora').value,CLIENTE_NOMBRE:document.getElementById('cliente-nombre').value.trim(),CLIENTE_EMAIL:document.getElementById('cliente-email').value.trim(),CLIENTE_TEL:document.getElementById('cliente-tel').value.trim(),TOTAL_BRUTO:total,MEDIO_PAGO:pagoSeleccionado,CUOTAS:document.getElementById('cuotas').value,REQUIERE_FACTURA:requiereFactura?'SI':'NO',CUIT:requiereFactura?document.getElementById('cuit').value.trim():'',RAZON_SOCIAL:requiereFactura?document.getElementById('razon-social').value.trim():'',ENVIO_FACTURA:requiereFactura?document.getElementById('envio-factura').value:'',OBSERVACIONES:document.getElementById('observaciones').value.trim(),ESTADO:'PENDIENTE',ITEMS:JSON.stringify(items)};
+  const btn=document.querySelector('.btn-submit');btn.classList.add('loading');btn.textContent='Guardando...';
+  try{if(SCRIPT_URL==='TU_GOOGLE_APPS_SCRIPT_URL_AQUI'){await new Promise(r=>setTimeout(r,1200));showSuccess(payload)}else{const fd=new FormData();Object.entries(payload).forEach(([k,v])=>fd.append(k,v));await fetch(SCRIPT_URL,{method:'POST',body:fd,mode:'no-cors'});showSuccess(payload)}}
+  catch(err){alert('Error al guardar. Revisá la conexión.');btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>'}}
+function showSuccess(p){document.getElementById('modal-resumen').textContent=`${p.CLIENTE_NOMBRE} · $ ${p.TOTAL_BRUTO.toLocaleString('es-AR')} · ${p.MEDIO_PAGO.replace(/_/g,' ')}`;document.getElementById('modal-id').textContent=`ID Venta: ${p.ID_VENTA}`;document.getElementById('modal').classList.add('visible')}
+function nuevaVenta(){document.getElementById('modal').classList.remove('visible');['cliente-nombre','cliente-email','cliente-tel','observaciones','cuit','razon-social'].forEach(id=>document.getElementById(id).value='');document.getElementById('items-container').innerHTML='';document.getElementById('total-display').textContent='$ 0';document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));pagoSeleccionado='';requiereFactura=false;document.getElementById('factura-toggle').classList.remove('active');document.getElementById('factura-fields').classList.remove('visible');document.getElementById('cuotas-section').classList.remove('visible');document.getElementById('cuotas').value='1';currentReciboNum=genReciboNum();addItem();window.scrollTo(0,0);const btn=document.querySelector('.btn-submit');btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>'}
+addItem();
+</script>
+</body>
+</html>
