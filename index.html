@@ -34,7 +34,8 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
 .total-bar{display:flex;align-items:center;justify-content:space-between;background:var(--charcoal);border-radius:var(--radius-sm);padding:20px 24px;margin-top:18px}
 .total-label{font-size:16px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:1px}
 .total-amount{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold-light)}
-.payment-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.payment-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
+
 .pay-btn{padding:18px 12px;border:2.5px solid var(--border);border-radius:var(--radius-sm);background:var(--cream);font-family:'Lato',sans-serif;font-size:17px;font-weight:700;color:var(--mid);cursor:pointer;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
 .pay-btn .pay-icon{font-size:24px}
 .pay-btn.selected{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
@@ -137,7 +138,8 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
   <div class="check-badge">✓</div>
 </button>
 
-    <div class="pagos-seleccionados" id="pagos-seleccionados"></div>
+    <div class="pagos-seleccionados" id="pagos-seleccionados" style="width:100%;margin-top:16px"></div>
+
     <div id="cuotas-section" style="display:none;margin-top:14px"><div id="cuotas-container" class="cuotas-row"></div></div>
     <div id="balance-bar" class="balance-bar balance-neutral" style="display:none"></div>
   </div>
