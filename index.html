@@ -192,7 +192,8 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw_2rcXvk1hp_29XSkvcnDAJydEj0mLoSBx76s2tUz8otg9xVqLxeohx5RKzQAW0brW/exec';
 
 let pagosSeleccionados={},requiereFactura=false,itemCount=0;
-const METODO_LABELS={EFECTIVO:'Efectivo',TRANSFERENCIA:'Transferencia',MERCADO_PAGO:'Mercado Pago',VISA_DEBITO:'Visa Débito',MASTERCARD_DEBITO:'Master Débito',VISA_CREDITO:'Visa Crédito',MASTERCARD_CREDITO:'Master Crédito',DOLARES:'Dólares'};
+const METODO_LABELS={EFECTIVO:'Efectivo',TRANSFERENCIA:'Transferencia',MERCADO_PAGO:'Mercado Pago',VISA_DEBITO:'Visa Débito',MASTERCARD_DEBITO:'Master Débito',VISA_CREDITO:'Visa Crédito',MASTERCARD_CREDITO:'Master Crédito',DOLARES:'Dólares',CUENTA_CORRIENTE:'Cuenta Corriente'};
+
 const CREDITO_METODOS=['VISA_CREDITO','MASTERCARD_CREDITO'];
 function updateClock(){const n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('fecha-display').textContent=n.toLocaleDateString('es-AR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});document.getElementById('fecha').value=n.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});document.getElementById('hora').value=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 setInterval(updateClock,1000);updateClock();
