@@ -128,8 +128,15 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
       <button class="pay-btn" onclick="togglePago(this,'MASTERCARD_DEBITO','💳')"><span class="pay-icon">💳</span>Master Débito<div class="check-badge">✓</div></button>
       <button class="pay-btn" onclick="togglePago(this,'VISA_CREDITO','💳')"><span class="pay-icon">💳</span>Visa Crédito<div class="check-badge">✓</div></button>
       <button class="pay-btn" onclick="togglePago(this,'MASTERCARD_CREDITO','💳')"><span class="pay-icon">💳</span>Master Crédito<div class="check-badge">✓</div></button>
-      <button class="pay-btn" onclick="togglePago(this,'DOLARES','💲')"><span class="pay-icon">💲</span>Dólares<div class="check-badge">✓</div></button>
-    </div>
+      <button class="pay-btn" onclick="togglePago(this,'DOLARES','💲')">
+  <span class="pay-icon">💲</span>Dólares
+  <div class="check-badge">✓</div>
+</button>
+<button class="pay-btn" onclick="togglePago(this,'CUENTA_CORRIENTE','📒')">
+  <span class="pay-icon">📒</span>Cuenta Corriente
+  <div class="check-badge">✓</div>
+</button>
+
     <div class="pagos-seleccionados" id="pagos-seleccionados"></div>
     <div id="cuotas-section" style="display:none;margin-top:14px"><div id="cuotas-container" class="cuotas-row"></div></div>
     <div id="balance-bar" class="balance-bar balance-neutral" style="display:none"></div>
