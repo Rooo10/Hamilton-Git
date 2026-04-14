@@ -76,6 +76,7 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
 .btn-submit:active{transform:scale(0.99)}
 .btn-submit.loading{opacity:0.7;pointer-events:none}
 .btn-submit .btn-sub{display:block;font-family:'Lato',sans-serif;font-size:14px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase;margin-top:4px;font-weight:700}
+.btn-ventas{width:100%;padding:18px;background:var(--blue);color:white;border:none;border-radius:var(--radius);font-family:'Lato',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
 .modal-overlay.visible{display:flex}
 .modal{background:white;border-radius:var(--radius);padding:44px 36px;text-align:center;max-width:400px;width:100%;box-shadow:var(--shadow-lg)}
@@ -84,6 +85,29 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
 .modal p{color:var(--mid);font-size:18px;margin-bottom:8px;line-height:1.5}
 .modal .id-venta{font-size:15px;color:var(--light);font-weight:700;margin-bottom:28px}
 .btn-nueva{width:100%;padding:20px;background:var(--charcoal);color:var(--cream);border:none;border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:20px;font-weight:700;cursor:pointer}
+/* PANEL ÚLTIMAS VENTAS */
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.panel-overlay.visible{display:flex}
+.panel{background:var(--cream);border-radius:var(--radius);width:100%;max-width:860px;box-shadow:var(--shadow-lg);margin:auto}
+.panel-header{background:var(--charcoal);border-radius:var(--radius) var(--radius) 0 0;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
+.panel-header h2{font-family:'Playfair Display',serif;color:var(--cream);font-size:22px}
+.btn-cerrar-panel{background:transparent;border:2px solid var(--light);color:var(--light);border-radius:10px;padding:8px 16px;font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer}
+.panel-body{padding:20px}
+.buscar-row{display:flex;gap:10px;margin-bottom:16px}
+.buscar-row input{flex:1;padding:14px 18px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:18px;background:white;outline:none}
+.buscar-row input:focus{border-color:var(--blue)}
+.btn-buscar{padding:14px 20px;background:var(--blue);color:white;border:none;border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer}
+.venta-card{background:white;border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)}
+.venta-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.venta-cliente{font-size:19px;font-weight:700;color:var(--dark)}
+.venta-total{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold)}
+.venta-meta{font-size:14px;color:var(--light);margin-bottom:8px}
+.venta-tag{display:inline-block;background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:3px 10px;font-size:13px;font-weight:700;margin:2px}
+.venta-tag.pago{background:var(--blue-light);color:var(--blue);border-color:#90b4d8}
+.venta-tag.item{background:var(--green-light);color:var(--green);border-color:var(--green)}
+.venta-tag.anulada{background:var(--red-light);color:var(--red);border-color:var(--red)}
+.btn-anular{padding:10px 18px;background:var(--red-light);color:var(--red);border:2px solid var(--red);border-radius:10px;font-family:'Lato',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px}
+.loading-msg{text-align:center;padding:40px;color:var(--mid);font-size:18px}
 @media(max-width:540px){.row-2{grid-template-columns:1fr}.items-header,.item-row{grid-template-columns:54px 1fr 90px 90px 44px}.pago-item{grid-template-columns:1fr 130px 44px}.total-amount{font-size:28px}.cuotas-row{grid-template-columns:1fr}}
 </style>
 </head>
@@ -163,7 +187,10 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
     <div class="field" style="margin-bottom:0"><input type="text" id="observaciones" placeholder="Notas adicionales de la venta..."></div>
   </div>
   <button class="btn-submit" onclick="submitVenta()">Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span></button>
+  <button class="btn-ventas" onclick="abrirPanel()">🔍 &nbsp;Ver últimas ventas</button>
 </div>
+
+<!-- MODAL ÉXITO -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="check">✅</div><h2>¡Venta registrada!</h2>
@@ -171,9 +198,26 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
     <button class="btn-nueva" onclick="nuevaVenta()">Nueva Venta</button>
   </div>
 </div>
+
+<!-- PANEL ÚLTIMAS VENTAS -->
+<div class="panel-overlay" id="panel-overlay">
+  <div class="panel">
+    <div class="panel-header">
+      <h2>🔍 Últimas Ventas</h2>
+      <button class="btn-cerrar-panel" onclick="cerrarPanel()">Cerrar ✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="buscar-row">
+        <input type="text" id="buscar-cliente" placeholder="Buscar por nombre de cliente..." autocomplete="off">
+        <button class="btn-buscar" onclick="cargarVentas()">Buscar</button>
+      </div>
+      <div id="ventas-lista"><div class="loading-msg">Tocá Buscar para cargar las últimas ventas</div></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwFMUgqYUNxDW6So0uV_meTECw07OOxF9ZyKiHd-SMx0h6tiiFUkuQBmtvvoyjVEWxf/exec';
-
 let pagosSeleccionados={},requiereFactura=false,itemCount=0;
 const METODO_LABELS={EFECTIVO:'Efectivo',TRANSFERENCIA:'Transferencia',MERCADO_PAGO:'Mercado Pago',VISA_DEBITO:'Visa Débito',MASTERCARD_DEBITO:'Master Débito',VISA_CREDITO:'Visa Crédito',MASTERCARD_CREDITO:'Master Crédito',DOLARES:'Dólares',CUENTA_CORRIENTE:'Cuenta Corriente'};
 const CREDITO_METODOS=['VISA_CREDITO','MASTERCARD_CREDITO'];
@@ -196,6 +240,42 @@ function recalcImporte(){const radios=document.querySelectorAll('input[name="imp
 async function submitVenta(){if(!document.getElementById('cliente-nombre').value.trim()){alert('Por favor ingresá el nombre del cliente.');return}if(Object.keys(pagosSeleccionados).length===0){alert('Por favor seleccioná al menos una forma de pago.');return}const items=[];let total=0;let validos=true;document.querySelectorAll('.item-row').forEach(r=>{const id=r.id;const c=parseFloat(document.getElementById(`${id}-cant`)?.value)||0;const d=document.getElementById(`${id}-desc`)?.value.trim();const p=parseFloat(document.getElementById(`${id}-precio`)?.value)||0;if(!d||p===0){validos=false;return}const s=c*p;items.push({cant:c,desc:d,precio:p,sub:s});total+=s});if(items.length===0){alert('Agregá al menos un producto.');return}if(!validos){alert('Completá descripción y precio de todos los productos.');return}if(Object.keys(pagosSeleccionados).length>1){const totalPagos=Object.keys(pagosSeleccionados).reduce((acc,m)=>acc+(parseFloat(document.getElementById(`pago-importe-${m}`)?.value)||0),0);if(Math.abs(total-totalPagos)>=1){if(!confirm(`⚠️ Los pagos no coinciden.\nTotal venta: $${total.toLocaleString('es-AR')}\nTotal pagos: $${totalPagos.toLocaleString('es-AR')}\n\n¿Confirmar igual?`))return}}const radios=document.querySelectorAll('input[name="importe-factura"]');let importeFacturaType='TOTAL_VENTA';radios.forEach(r=>{if(r.checked)importeFacturaType=r.value});const importeFacturaFinal=parseFloat(document.getElementById('importe-factura-final').textContent.replace(/[^0-9,.]/g,'').replace('.','').replace(',','.'))||total;const pagosJSON=JSON.stringify(Object.keys(pagosSeleccionados).map(m=>({metodo:m,importe:parseFloat(document.getElementById(`pago-importe-${m}`)?.value)||0,cuotas:document.getElementById(`cuotas-${m}`)?.value||'1'})));const now=new Date();const payload={ID_VENTA:`HAM-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${currentReciboNum}`,RECIBO_NUMERO:currentReciboNum,FECHA:document.getElementById('fecha').value,HORA:document.getElementById('hora').value,CLIENTE_NOMBRE:document.getElementById('cliente-nombre').value.trim(),CLIENTE_EMAIL:document.getElementById('cliente-email').value.trim(),CLIENTE_TEL:document.getElementById('cliente-tel').value.trim(),TOTAL_BRUTO:total,PAGOS:pagosJSON,REQUIERE_FACTURA:requiereFactura?'SI':'NO',IMPORTE_FACTURA_TIPO:importeFacturaType,IMPORTE_FACTURA:importeFacturaFinal,CUIT:requiereFactura?document.getElementById('cuit').value.trim():'',RAZON_SOCIAL:requiereFactura?document.getElementById('razon-social').value.trim():'',ENVIO_FACTURA:requiereFactura?document.getElementById('envio-factura').value:'',OBSERVACIONES:document.getElementById('observaciones').value.trim(),ESTADO:'PENDIENTE',ITEMS:JSON.stringify(items)};const btn=document.querySelector('.btn-submit');btn.classList.add('loading');btn.textContent='Guardando...';try{const fd=new FormData();Object.entries(payload).forEach(([k,v])=>fd.append(k,v));await fetch(SCRIPT_URL,{method:'POST',body:fd,mode:'no-cors'});showSuccess(payload)}catch(err){alert('Error al guardar. Revisá la conexión.');btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>'}}
 function showSuccess(p){const pagosLabels=JSON.parse(p.PAGOS).map(pg=>`${METODO_LABELS[pg.metodo]} $${Number(pg.importe).toLocaleString('es-AR')}`).join(' + ');document.getElementById('modal-resumen').innerHTML=`<strong>${p.CLIENTE_NOMBRE}</strong><br>$ ${Number(p.TOTAL_BRUTO).toLocaleString('es-AR')}<br><span style="font-size:15px;color:var(--mid)">${pagosLabels}</span>`;document.getElementById('modal-id').textContent=`ID Venta: ${p.ID_VENTA}`;document.getElementById('modal').classList.add('visible')}
 function nuevaVenta(){document.getElementById('modal').classList.remove('visible');['cliente-nombre','cliente-email','cliente-tel','observaciones','cuit','razon-social','importe-personalizado'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});document.getElementById('items-container').innerHTML='';document.getElementById('total-display').textContent='$ 0';document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));pagosSeleccionados={};document.getElementById('pagos-seleccionados').innerHTML='';document.getElementById('cuotas-section').style.display='none';document.getElementById('balance-bar').style.display='none';requiereFactura=false;document.getElementById('factura-toggle').classList.remove('active');document.getElementById('factura-fields').classList.remove('visible');document.querySelector('input[name="importe-factura"][value="TOTAL_VENTA"]').checked=true;document.getElementById('importe-factura-final').textContent='$ 0';document.getElementById('opt-total-venta-sub').textContent='$ 0';currentReciboNum=genReciboNum();addItem();window.scrollTo(0,0);const btn=document.querySelector('.btn-submit');btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>'}
+// ── PANEL ÚLTIMAS VENTAS ─────────────────────────────────────
+function abrirPanel(){document.getElementById('panel-overlay').classList.add('visible');cargarVentas()}
+function cerrarPanel(){document.getElementById('panel-overlay').classList.remove('visible')}
+async function cargarVentas(){
+  const buscar=document.getElementById('buscar-cliente').value.trim();
+  const lista=document.getElementById('ventas-lista');
+  lista.innerHTML='<div class="loading-msg">⏳ Cargando ventas...</div>';
+  try{
+    const url=`${SCRIPT_URL}?action=ultimas_ventas&buscar=${encodeURIComponent(buscar)}`;
+    const resp=await fetch(url);
+    const data=await resp.json();
+    if(data.status!=='ok'||!data.ventas.length){lista.innerHTML='<div class="loading-msg">No se encontraron ventas.</div>';return}
+    lista.innerHTML=data.ventas.map(v=>`
+      <div class="venta-card" id="vc-${v.id_venta}">
+        <div class="venta-card-header">
+          <div class="venta-cliente">${v.cliente}</div>
+          <div class="venta-total">$ ${Number(v.total).toLocaleString('es-AR')}</div>
+        </div>
+        <div class="venta-meta">📅 ${v.fecha} ${v.hora} &nbsp;·&nbsp; ID: ${v.id_venta} &nbsp;·&nbsp; Recibo Nº${v.recibo}</div>
+        <div>${v.pagos.map(p=>`<span class="venta-tag pago">💳 ${p}</span>`).join('')}</div>
+        <div style="margin-top:6px">${v.items.map(i=>`<span class="venta-tag item">🪞 ${i}</span>`).join('')}</div>
+        <button class="btn-anular" onclick="anularVenta('${v.id_venta}')">🗑 Anular esta venta</button>
+      </div>`).join('');
+  }catch(err){lista.innerHTML='<div class="loading-msg">⚠️ Error al cargar. Revisá la conexión.</div>'}}
+async function anularVenta(idVenta){
+  if(!confirm(`⚠️ ¿Anular la venta ${idVenta}?\n\nEsta acción marca la venta como ANULADA. No se borra — queda registrada en el historial.`))return;
+  try{
+    const url=`${SCRIPT_URL}?action=anular&id_venta=${encodeURIComponent(idVenta)}`;
+    const resp=await fetch(url);
+    const data=await resp.json();
+    if(data.status==='ok'){
+      const card=document.getElementById(`vc-${idVenta}`);
+      if(card){card.style.opacity='0.5';card.querySelector('.btn-anular').textContent='✅ Anulada';card.querySelector('.btn-anular').disabled=true;card.querySelector('.venta-cliente').insertAdjacentHTML('afterend','<span class="venta-tag anulada" style="margin-left:8px">ANULADA</span>')}
+      alert('✅ Venta anulada correctamente.')
+    }else{alert('Error al anular: '+data.msg)}
+  }catch(err){alert('⚠️ Error de conexión.')}}
 addItem();
 </script>
 </body>
