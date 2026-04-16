@@ -27,7 +27,6 @@ input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
 input.error{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(192,57,43,0.13)!important}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .recibo-badge{background:var(--gold);color:white;font-size:14px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:0.5px;margin-left:auto}
-/* TELÉFONO CON CÓDIGO DE PAÍS */
 .tel-row{display:flex;gap:8px;align-items:flex-start}
 .tel-prefix{width:90px;flex-shrink:0}
 .tel-prefix input{padding:16px 10px;font-size:18px;text-align:center;font-weight:700}
@@ -160,7 +159,7 @@ input.error{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(192,57,4
             <input type="tel" id="cliente-tel" placeholder="3416854285" autocomplete="off">
           </div>
         </div>
-        <div class="field-hint">Sin 0 ni 15 · Ej: (+54) (341) 6854285 · Solo números</div>
+        <div class="field-hint">Sin 0 ni 15 · Ej: 3416854285 · Solo números</div>
       </div>
     </div>
   </div>
@@ -284,154 +283,61 @@ setInterval(updateClock,1000);updateClock();
 function genReciboNum(){const s=parseInt(localStorage.getItem('hamilton_recibo_num')||'449');const n=s+1;localStorage.setItem('hamilton_recibo_num',n);document.getElementById('recibo-num').textContent='Nº '+String(n).padStart(6,'0');return String(n).padStart(6,'0')}
 let currentReciboNum=genReciboNum();
 
-// ── Obtener teléfono completo para WhatsApp ──────────────────
-function getTelCompleto() {
-  const prefix = document.getElementById('tel-prefix').value.trim().replace(/\D/g,'');
-  const num    = document.getElementById('cliente-tel').value.trim().replace(/\D/g,'');
-  if (!num) return '';
-  return prefix + num;
+function getTelCompleto(){
+  const prefix=document.getElementById('tel-prefix').value.trim().replace(/\D/g,'');
+  const num=document.getElementById('cliente-tel').value.trim().replace(/\D/g,'');
+  if(!num)return '';
+  return prefix+num;
 }
 
-// ── Auto-formato campos ──────────────────────────────────────
-function setupAutoFormato() {
-  // Nombre → MAYÚSCULAS sin acentos
-  const nombreInput = document.getElementById('cliente-nombre');
-  if (nombreInput) {
-    nombreInput.addEventListener('input', function() {
-      const pos = this.selectionStart;
-      this.value = this.value.toUpperCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-        .replace(/[^A-Z0-9 ]/g,'');
-      this.setSelectionRange(pos,pos);
-    });
-  }
-  // Razón social → MAYÚSCULAS sin acentos
-  const razonInput = document.getElementById('razon-social');
-  if (razonInput) {
-    razonInput.addEventListener('input', function() {
-      const pos = this.selectionStart;
-      this.value = this.value.toUpperCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-        .replace(/[^A-Z0-9 .]/g,'');
-      this.setSelectionRange(pos,pos);
-    });
-  }
-  // Teléfono → solo dígitos
-  const telInput = document.getElementById('cliente-tel');
-  if (telInput) {
-    telInput.addEventListener('input', function() {
-      this.value = this.value.replace(/[^0-9]/g,'');
-    });
-  }
-  // Prefijo → solo + y dígitos
-  const prefixInput = document.getElementById('tel-prefix');
-  if (prefixInput) {
-    prefixInput.addEventListener('input', function() {
-      let v = this.value.replace(/[^0-9+]/g,'');
-      if (v && !v.startsWith('+')) v = '+' + v;
-      this.value = v;
-    });
-  }
-  // CUIT → solo dígitos y guiones
-  const cuitInput = document.getElementById('cuit');
-  if (cuitInput) {
-    cuitInput.addEventListener('input', function() {
-      this.value = this.value.replace(/[^0-9\-]/g,'');
-    });
-  }
+function normalizarDesc(el){
+  const pos=el.selectionStart;
+  el.value=el.value.toUpperCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Z0-9 .,\-\/]/g,'');
+  el.setSelectionRange(pos,pos);
 }
 
-// ── Validación antes de guardar ──────────────────────────────
-function validarCampos() {
-  const nombre = document.getElementById('cliente-nombre').value.trim();
-  const email  = document.getElementById('cliente-email').value.trim();
-  const tel    = document.getElementById('cliente-tel').value.trim().replace(/\D/g,'');
+function setupAutoFormato(){
+  const nombreInput=document.getElementById('cliente-nombre');
+  if(nombreInput){nombreInput.addEventListener('input',function(){const pos=this.selectionStart;this.value=this.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,'');this.setSelectionRange(pos,pos);})}
+  const razonInput=document.getElementById('razon-social');
+  if(razonInput){razonInput.addEventListener('input',function(){const pos=this.selectionStart;this.value=this.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 .]/g,'');this.setSelectionRange(pos,pos);})}
+  const telInput=document.getElementById('cliente-tel');
+  if(telInput){telInput.addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'');})}
+  const prefixInput=document.getElementById('tel-prefix');
+  if(prefixInput){prefixInput.addEventListener('input',function(){let v=this.value.replace(/[^0-9+]/g,'');if(v&&!v.startsWith('+'))v='+'+v;this.value=v;})}
+  const cuitInput=document.getElementById('cuit');
+  if(cuitInput){cuitInput.addEventListener('input',function(){this.value=this.value.replace(/[^0-9\-]/g,'');})}
+}
 
-  // Limpiar errores previos
+function validarCampos(){
+  const nombre=document.getElementById('cliente-nombre').value.trim();
+  const email=document.getElementById('cliente-email').value.trim();
+  const tel=document.getElementById('cliente-tel').value.trim().replace(/\D/g,'');
   document.querySelectorAll('.error').forEach(el=>el.classList.remove('error'));
-
-  if (!nombre) {
-    alert('⚠️ El nombre del cliente es obligatorio.');
-    document.getElementById('cliente-nombre').classList.add('error');
-    document.getElementById('cliente-nombre').focus();
-    return false;
+  if(!nombre){alert('⚠️ El nombre del cliente es obligatorio.');document.getElementById('cliente-nombre').classList.add('error');document.getElementById('cliente-nombre').focus();return false;}
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('⚠️ El email no tiene un formato válido.\nEj: nombre@gmail.com');document.getElementById('cliente-email').classList.add('error');document.getElementById('cliente-email').focus();return false;}
+  if(tel&&(tel.length<10||tel.length>13)){alert('⚠️ El teléfono debe tener entre 10 y 13 dígitos.\nEj: 3415551234');document.getElementById('cliente-tel').classList.add('error');document.getElementById('cliente-tel').focus();return false;}
+  if(requiereFactura){
+    const cuit=document.getElementById('cuit').value.trim().replace(/\D/g,'');
+    const razon=document.getElementById('razon-social').value.trim();
+    const envioFactura=document.getElementById('envio-factura').value;
+    if(!cuit){alert('⚠️ El CUIT/DNI es obligatorio para facturar.');document.getElementById('cuit').classList.add('error');document.getElementById('cuit').focus();return false;}
+    if(cuit.length!==8&&cuit.length!==11){alert('⚠️ El CUIT debe tener 11 dígitos o el DNI 8 dígitos.\nEj CUIT: 20-12345678-9');document.getElementById('cuit').classList.add('error');document.getElementById('cuit').focus();return false;}
+    if(!razon){alert('⚠️ La Razón Social es obligatoria para facturar.');document.getElementById('razon-social').classList.add('error');document.getElementById('razon-social').focus();return false;}
+    if((envioFactura==='EMAIL'||envioFactura==='AMBOS')&&!email){alert('⚠️ Ingresá el email del cliente para enviar la factura.');document.getElementById('cliente-email').classList.add('error');document.getElementById('cliente-email').focus();return false;}
+    if((envioFactura==='WHATSAPP'||envioFactura==='AMBOS')&&!tel){alert('⚠️ Ingresá el teléfono del cliente para enviar la factura por WhatsApp.');document.getElementById('cliente-tel').classList.add('error');document.getElementById('cliente-tel').focus();return false;}
   }
-
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('⚠️ El email no tiene un formato válido.\nEj: nombre@gmail.com');
-    document.getElementById('cliente-email').classList.add('error');
-    document.getElementById('cliente-email').focus();
-    return false;
-  }
-
-  if (tel && (tel.length < 10 || tel.length > 13)) {
-    alert('⚠️ El teléfono debe tener entre 10 y 13 dígitos.\nEj: 3415551234');
-    document.getElementById('cliente-tel').classList.add('error');
-    document.getElementById('cliente-tel').focus();
-    return false;
-  }
-
-  if (requiereFactura) {
-    const cuit  = document.getElementById('cuit').value.trim().replace(/\D/g,'');
-    const razon = document.getElementById('razon-social').value.trim();
-    const envioFactura = document.getElementById('envio-factura').value;
-
-    if (!cuit) {
-      alert('⚠️ El CUIT/DNI es obligatorio para facturar.');
-      document.getElementById('cuit').classList.add('error');
-      document.getElementById('cuit').focus();
-      return false;
-    }
-    if (cuit.length !== 8 && cuit.length !== 11) {
-      alert('⚠️ El CUIT debe tener 11 dígitos o el DNI 8 dígitos.\nEj CUIT: 20-12345678-9');
-      document.getElementById('cuit').classList.add('error');
-      document.getElementById('cuit').focus();
-      return false;
-    }
-    if (!razon) {
-      alert('⚠️ La Razón Social es obligatoria para facturar.');
-      document.getElementById('razon-social').classList.add('error');
-      document.getElementById('razon-social').focus();
-      return false;
-    }
-    if ((envioFactura==='EMAIL'||envioFactura==='AMBOS') && !email) {
-      alert('⚠️ Ingresá el email del cliente para enviar la factura.');
-      document.getElementById('cliente-email').classList.add('error');
-      document.getElementById('cliente-email').focus();
-      return false;
-    }
-    if ((envioFactura==='WHATSAPP'||envioFactura==='AMBOS') && !tel) {
-      alert('⚠️ Ingresá el teléfono del cliente para enviar la factura por WhatsApp.');
-      document.getElementById('cliente-tel').classList.add('error');
-      document.getElementById('cliente-tel').focus();
-      return false;
-    }
-  }
-
-  const envioRecibo = document.querySelector('input[name="envio-recibo"]:checked')?.value||'NO';
-  if ((envioRecibo==='EMAIL'||envioRecibo==='AMBOS') && !email) {
-    alert('⚠️ Ingresá el email del cliente para enviar el recibo.');
-    document.getElementById('cliente-email').classList.add('error');
-    document.getElementById('cliente-email').focus();
-    return false;
-  }
-  if ((envioRecibo==='WHATSAPP'||envioRecibo==='AMBOS') && !tel) {
-    alert('⚠️ Ingresá el teléfono del cliente para enviar el recibo por WhatsApp.');
-    document.getElementById('cliente-tel').classList.add('error');
-    document.getElementById('cliente-tel').focus();
-    return false;
-  }
-
+  const envioRecibo=document.querySelector('input[name="envio-recibo"]:checked')?.value||'NO';
+  if((envioRecibo==='EMAIL'||envioRecibo==='AMBOS')&&!email){alert('⚠️ Ingresá el email del cliente para enviar el recibo.');document.getElementById('cliente-email').classList.add('error');document.getElementById('cliente-email').focus();return false;}
+  if((envioRecibo==='WHATSAPP'||envioRecibo==='AMBOS')&&!tel){alert('⚠️ Ingresá el teléfono del cliente para enviar el recibo por WhatsApp.');document.getElementById('cliente-tel').classList.add('error');document.getElementById('cliente-tel').focus();return false;}
   return true;
 }
 
-function updateReciboOpt(){
-  document.querySelectorAll('.recibo-opt').forEach(o=>o.classList.remove('selected'));
-  const sel=document.querySelector('input[name="envio-recibo"]:checked');
-  if(sel)sel.closest('.recibo-opt').classList.add('selected');
-}
+function updateReciboOpt(){document.querySelectorAll('.recibo-opt').forEach(o=>o.classList.remove('selected'));const sel=document.querySelector('input[name="envio-recibo"]:checked');if(sel)sel.closest('.recibo-opt').classList.add('selected');}
 
-function addItem(){itemCount++;const id='item-'+itemCount;const div=document.createElement('div');div.className='item-row';div.id=id;div.innerHTML=`<input type="number" min="1" value="1" id="${id}-cant" oninput="calcTotal()" style="text-align:center"><input type="text" placeholder="Descripción" id="${id}-desc" autocomplete="off"><input type="number" min="0" placeholder="Precio" id="${id}-precio" oninput="calcTotal()"><input type="number" placeholder="0" id="${id}-sub" readonly style="background:#f0ede8;color:var(--mid);text-align:right"><button class="btn-remove" onclick="removeItem('${id}')">×</button>`;document.getElementById('items-container').appendChild(div);setTimeout(()=>div.querySelector(`#${id}-desc`).focus(),50)}
+function addItem(){itemCount++;const id='item-'+itemCount;const div=document.createElement('div');div.className='item-row';div.id=id;div.innerHTML=`<input type="number" min="1" value="1" id="${id}-cant" oninput="calcTotal()" style="text-align:center"><input type="text" placeholder="Descripción" id="${id}-desc" autocomplete="off" oninput="normalizarDesc(this)"><input type="number" min="0" placeholder="Precio" id="${id}-precio" oninput="calcTotal()"><input type="number" placeholder="0" id="${id}-sub" readonly style="background:#f0ede8;color:var(--mid);text-align:right"><button class="btn-remove" onclick="removeItem('${id}')">×</button>`;document.getElementById('items-container').appendChild(div);setTimeout(()=>div.querySelector(`#${id}-desc`).focus(),50)}
 function removeItem(id){const el=document.getElementById(id);if(el){el.remove();calcTotal()}}
 function getTotalVenta(){let t=0;document.querySelectorAll('.item-row').forEach(r=>{const id=r.id;const c=parseFloat(document.getElementById(`${id}-cant`)?.value)||0;const p=parseFloat(document.getElementById(`${id}-precio`)?.value)||0;t+=c*p});return t}
 function calcTotal(){let t=0;document.querySelectorAll('.item-row').forEach(r=>{const id=r.id;const c=parseFloat(document.getElementById(`${id}-cant`)?.value)||0;const p=parseFloat(document.getElementById(`${id}-precio`)?.value)||0;const s=c*p;const se=document.getElementById(`${id}-sub`);if(se)se.value=s>0?s.toLocaleString('es-AR'):'';t+=s});document.getElementById('total-display').textContent='$ '+t.toLocaleString('es-AR',{minimumFractionDigits:0});document.getElementById('opt-total-venta-sub').textContent='$ '+t.toLocaleString('es-AR',{minimumFractionDigits:0});if(Object.keys(pagosSeleccionados).length===1){const m=Object.keys(pagosSeleccionados)[0];const el=document.getElementById(`pago-importe-${m}`);if(el)el.value=t||''}updateBalance();updateImporteFactura();return t}
@@ -445,46 +351,33 @@ function updateImporteFactura(){const radios=document.querySelectorAll('input[na
 function recalcImporte(){const radios=document.querySelectorAll('input[name="importe-factura"]');let sel='TOTAL_VENTA';radios.forEach(r=>{if(r.checked)sel=r.value});const totalVenta=getTotalVenta();let importe=0;if(sel==='TOTAL_VENTA'){importe=totalVenta}else if(sel==='SOLO_TARJETA'){['VISA_DEBITO','MASTERCARD_DEBITO','VISA_CREDITO','MASTERCARD_CREDITO'].forEach(m=>{if(pagosSeleccionados[m])importe+=parseFloat(document.getElementById(`pago-importe-${m}`)?.value)||0});document.getElementById('opt-solo-tarjeta-sub').textContent=importe>0?'$ '+importe.toLocaleString('es-AR',{minimumFractionDigits:0}):'Sin tarjeta seleccionada'}else{importe=parseFloat(document.getElementById('importe-personalizado')?.value)||0}document.getElementById('importe-factura-final').textContent='$ '+importe.toLocaleString('es-AR',{minimumFractionDigits:0})}
 
 async function submitVenta(){
-  if(!validarCampos()) return;
+  if(!validarCampos())return;
   if(Object.keys(pagosSeleccionados).length===0){alert('Por favor seleccioná al menos una forma de pago.');return}
   const items=[];let total=0;let validos=true;
   document.querySelectorAll('.item-row').forEach(r=>{const id=r.id;const c=parseFloat(document.getElementById(`${id}-cant`)?.value)||0;const d=document.getElementById(`${id}-desc`)?.value.trim();const p=parseFloat(document.getElementById(`${id}-precio`)?.value)||0;if(!d||p===0){validos=false;return}const s=c*p;items.push({cant:c,desc:d,precio:p,sub:s});total+=s});
   if(items.length===0){alert('Agregá al menos un producto.');return}
   if(!validos){alert('Completá descripción y precio de todos los productos.');return}
   if(Object.keys(pagosSeleccionados).length>1){const totalPagos=Object.keys(pagosSeleccionados).reduce((acc,m)=>acc+(parseFloat(document.getElementById(`pago-importe-${m}`)?.value)||0),0);if(Math.abs(total-totalPagos)>=1){if(!confirm(`⚠️ Los pagos no coinciden.\nTotal venta: $${total.toLocaleString('es-AR')}\nTotal pagos: $${totalPagos.toLocaleString('es-AR')}\n\n¿Confirmar igual?`))return}}
-
   const radios=document.querySelectorAll('input[name="importe-factura"]');
   let importeFacturaType='TOTAL_VENTA';radios.forEach(r=>{if(r.checked)importeFacturaType=r.value});
   const importeFacturaFinal=parseFloat(document.getElementById('importe-factura-final').textContent.replace(/[^0-9,.]/g,'').replace('.','').replace(',','.'))||total;
   const pagosJSON=JSON.stringify(Object.keys(pagosSeleccionados).map(m=>({metodo:m,importe:parseFloat(document.getElementById(`pago-importe-${m}`)?.value)||0,cuotas:document.getElementById(`cuotas-${m}`)?.value||'1'})));
-
-  const envioReciboSel = document.querySelector('input[name="envio-recibo"]:checked')?.value||'NO';
-  const clienteEmail = document.getElementById('cliente-email').value.trim();
-  const telCompleto = getTelCompleto();
-
+  const envioReciboSel=document.querySelector('input[name="envio-recibo"]:checked')?.value||'NO';
+  const clienteEmail=document.getElementById('cliente-email').value.trim();
+  const telCompleto=getTelCompleto();
   const now=new Date();
   const payload={
     ID_VENTA:`HAM-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${currentReciboNum}`,
-    RECIBO_NUMERO:currentReciboNum,
-    FECHA:document.getElementById('fecha').value,
-    HORA:document.getElementById('hora').value,
+    RECIBO_NUMERO:currentReciboNum,FECHA:document.getElementById('fecha').value,HORA:document.getElementById('hora').value,
     CLIENTE_NOMBRE:document.getElementById('cliente-nombre').value.trim(),
-    CLIENTE_EMAIL:clienteEmail,
-    CLIENTE_TEL:telCompleto,
-    TOTAL_BRUTO:total,
-    PAGOS:pagosJSON,
-    REQUIERE_FACTURA:requiereFactura?'SI':'NO',
-    IMPORTE_FACTURA_TIPO:importeFacturaType,
-    IMPORTE_FACTURA:importeFacturaFinal,
+    CLIENTE_EMAIL:clienteEmail,CLIENTE_TEL:telCompleto,TOTAL_BRUTO:total,PAGOS:pagosJSON,
+    REQUIERE_FACTURA:requiereFactura?'SI':'NO',IMPORTE_FACTURA_TIPO:importeFacturaType,IMPORTE_FACTURA:importeFacturaFinal,
     CUIT:requiereFactura?document.getElementById('cuit').value.trim():'',
     RAZON_SOCIAL:requiereFactura?document.getElementById('razon-social').value.trim():'',
     ENVIO_FACTURA:requiereFactura?document.getElementById('envio-factura').value:'',
-    ENVIO_RECIBO:envioReciboSel,
-    OBSERVACIONES:document.getElementById('observaciones').value.trim(),
-    ESTADO:'PENDIENTE',
-    ITEMS:JSON.stringify(items)
+    ENVIO_RECIBO:envioReciboSel,OBSERVACIONES:document.getElementById('observaciones').value.trim(),
+    ESTADO:'PENDIENTE',ITEMS:JSON.stringify(items)
   };
-
   const btn=document.querySelector('.btn-submit');
   btn.classList.add('loading');btn.textContent='Guardando...';
   try{
@@ -507,7 +400,7 @@ function showSuccess(p,envioRecibo,tel,total){
   const waSection=document.getElementById('modal-wa-section');
   if(necesitaWA&&tel){
     const totalF=Number(total).toLocaleString('es-AR',{minimumFractionDigits:0});
-    const msg=`¡Hola ${p.CLIENTE_NOMBRE}! Gracias por tu compra en Hamilton Deco\nRecibo N\u00ba${String(p.RECIBO_NUMERO).padStart(6,'0')} \u00b7 $${totalF}\n${p.FECHA} \u00b7 Necochea 1427, Rosario\n\u00a1Hasta pronto!`;
+    const msg=`\u00a1Hola ${p.CLIENTE_NOMBRE}! Gracias por tu compra en Hamilton Deco\nRecibo N\u00ba${String(p.RECIBO_NUMERO).padStart(6,'0')} \u00b7 $${totalF}\n${p.FECHA} \u00b7 Necochea 1427, Rosario\n\u00a1Hasta pronto!`;
     document.getElementById('btn-wa-recibo').href=`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`;
     waSection.style.display='block';
   }else{waSection.style.display='none';}
@@ -535,8 +428,7 @@ function nuevaVenta(){
   document.getElementById('importe-factura-final').textContent='$ 0';
   document.getElementById('opt-total-venta-sub').textContent='$ 0';
   currentReciboNum=genReciboNum();
-  addItem();
-  window.scrollTo(0,0);
+  addItem();window.scrollTo(0,0);
   const btn=document.querySelector('.btn-submit');
   btn.classList.remove('loading');
   btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>';
