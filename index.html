@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -242,6 +243,7 @@ input.error{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(192,57,4
 </div>
 
 <!-- MODAL ÉXITO -->
+
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="check">✅</div><h2>¡Venta registrada!</h2>
@@ -255,6 +257,7 @@ input.error{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(192,57,4
 </div>
 
 <!-- PANEL ÚLTIMAS VENTAS -->
+
 <div class="panel-overlay" id="panel-overlay">
   <div class="panel">
     <div class="panel-header">
@@ -366,9 +369,10 @@ async function submitVenta(){
   const clienteEmail=document.getElementById('cliente-email').value.trim();
   const telCompleto=getTelCompleto();
   const now=new Date();
+  const _ts=now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0')+String(now.getSeconds()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*900)+100);
   const payload={
-    ID_VENTA:`HAM-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${currentReciboNum}`,
-    RECIBO_NUMERO:currentReciboNum,FECHA:document.getElementById('fecha').value,HORA:document.getElementById('hora').value,
+    ID_VENTA:`HAM-${_ts}`,
+    RECIBO_NUMERO:_ts,FECHA:document.getElementById('fecha').value,HORA:document.getElementById('hora').value,
     CLIENTE_NOMBRE:document.getElementById('cliente-nombre').value.trim(),
     CLIENTE_EMAIL:clienteEmail,CLIENTE_TEL:telCompleto,TOTAL_BRUTO:total,PAGOS:pagosJSON,
     REQUIERE_FACTURA:requiereFactura?'SI':'NO',IMPORTE_FACTURA_TIPO:importeFacturaType,IMPORTE_FACTURA:importeFacturaFinal,
@@ -475,5 +479,6 @@ async function anularVenta(idVenta){
 addItem();
 setupAutoFormato();
 </script>
+
 </body>
 </html>
