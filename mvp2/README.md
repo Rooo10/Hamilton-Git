@@ -6,16 +6,26 @@ Deploy URL: https://script.google.com/macros/s/AKfycbwW0OK0cOhyGEVFVikeKCA68gfWe
 
 ## Estado de este backup (31/08/2026)
 
-| Archivo | Estado | Última versión confirmada |
+| Archivo | Estado | Fuente |
 |---|---|---|
-| `Codigo_MVP2_V2.gs` | ✅ Subido | v2.16 — blindaje fechas texto en 6 hojas |
-| `Dashboard_MVP2.gs` | ✅ Subido | Con columnas Q/R/S (Total $ / Total % / Partida) |
-| `Index_MVP2.html` | ⏳ Falta | Última copia en Notion es "Before 14 buttons" (15/05) — desactualizada |
-| `InitSheet_MVP2_V3.gs` | ⏳ Falta | No se encontró backup posterior al bloque inicial |
-| `LISTADO_CC.gs` | ⏳ Falta | No se encontró backup posterior al bloque inicial |
+| `Codigo_MVP2_V2.gs` | ✅ Subido | Copiado del editor GAS por Rooo — idéntico al backup de Notion (v2.16) |
+| `Dashboard_MVP2.gs` | ✅ Subido | Copiado del editor GAS por Rooo — idéntico al backup de Notion (con columnas Q/R/S) |
+| `Index_MVP2.html` | ✅ Subido | Copiado del editor GAS por Rooo — versión con los 14 métodos de pago. El backup de Notion estaba desactualizado (era la versión "Before 14 buttons" de mayo) |
+| `InitSheet_MVP2_V3.gs` | ✅ Subido | Copiado del editor GAS por Rooo — nunca antes backupeado en Notion |
+| `BaseClientes_MVP2.gs` | ✅ Subido | Copiado del editor GAS por Rooo — nunca antes backupeado en Notion |
+| `LISTADO_CC.gs` | ⏳ Falta | No se pudo confirmar contenido actual — pendiente de copiar del editor GAS |
 
-Los dos primeros archivos fueron reconstruidos desde el backup verificado en Notion
-(página "HAM_MVP3.0", 05/07/2026), que coincide con el deploy activo en producción.
+Los 5 archivos activos de MVP2 quedaron confirmados 1:1 contra el código real en el
+editor de Apps Script el 31/08/2026. Solo falta `LISTADO_CC.gs` para tener el backup
+completo del proyecto.
 
-Los tres archivos pendientes deben copiarse manualmente desde el editor de Apps Script
-(Extensiones → Apps Script en el Spreadsheet) para completar este backup.
+## Archivos obsoletos detectados en el proyecto GAS (no incluidos aquí)
+
+El editor de Apps Script (`Hamilton_MVP2`) tiene varios archivos legacy que ya no están
+en uso y generan confusión en el menú:
+- `Código.gs` — vacío, reservado
+- `Codigo_MVP2.gs` — versión pre-V2, reemplazada por `Codigo_MVP2_V2.gs`
+- `InitSheet_MVP2.gs` — reemplazada por V3
+- `InitSheet_MVP2_V2.gs` — reemplazada por V3
+
+Ver recomendación de limpieza antes de borrarlos.

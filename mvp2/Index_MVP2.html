@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hamilton Deco · Caja</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FAF7F2;--white:#FFFFFF;--charcoal:#1C1C1E;--dark:#2C2C2E;--mid:#5A5A5E;--light:#AEAEB2;--border:#D8D3CB;--gold:#B8860B;--gold-light:#D4A017;--gold-bg:#FDF8EE;--red:#C0392B;--red-light:#FDECEA;--blue:#1A4A7A;--blue-light:#EAF0F8;--green:#1E6B3C;--green-light:#E6F4EC;--shadow-sm:0 2px 8px rgba(0,0,0,0.07);--shadow-md:0 4px 20px rgba(0,0,0,0.11);--shadow-lg:0 8px 40px rgba(0,0,0,0.15);--radius:18px;--radius-sm:12px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;padding-bottom:50px;font-size:18px}
+header{background:var(--charcoal);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-md)}
+header h1{font-family:'Playfair Display',serif;color:var(--cream);font-size:26px;letter-spacing:0.5px}
+.header-sub{color:var(--gold-light);font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+#clock{color:var(--light);font-size:16px;font-weight:400;text-align:right}
+#fecha-display{color:var(--gold-light);font-size:13px;text-align:right;margin-top:2px}
+.container{max-width:860px;margin:0 auto;padding:24px 18px}
+.card{background:var(--white);border-radius:var(--radius);padding:28px;margin-bottom:18px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.card-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-title .icon{width:36px;height:36px;background:var(--cream);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.field{margin-bottom:18px}
+.field-hint{font-size:13px;color:var(--light);margin-top:6px;font-weight:400;letter-spacing:0}
+label{display:block;font-size:15px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+input[type="text"],input[type="email"],input[type="tel"],input[type="number"],select{width:100%;padding:16px 18px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:20px;color:var(--charcoal);background:var(--cream);outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(184,134,11,0.13);background:white}
+input[readonly]{background:#f0ede8;color:var(--mid);font-size:18px}
+input.error{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(192,57,43,0.13)!important}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.recibo-badge{background:var(--gold);color:white;font-size:14px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:0.5px;margin-left:auto}
+.tel-row{display:flex;gap:8px;align-items:flex-start}
+.tel-prefix{width:90px;flex-shrink:0}
+.tel-prefix input{padding:16px 10px;font-size:18px;text-align:center;font-weight:700}
+.tel-main{flex:1}
+.items-header{display:grid;grid-template-columns:64px 1fr 110px 110px 44px;gap:8px;margin-bottom:10px}
+.items-header span{font-size:13px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:0.6px}
+.item-row{display:grid;grid-template-columns:64px 1fr 110px 110px 44px;gap:8px;align-items:center;margin-bottom:12px}
+.item-row input{padding:14px 10px;font-size:18px}
+.btn-remove{width:44px;height:44px;border:none;background:var(--red-light);color:var(--red);border-radius:10px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
+.btn-add-item{width:100%;padding:16px;border:2.5px dashed var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--mid);font-family:'Lato',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:6px}
+.total-bar{display:flex;align-items:center;justify-content:space-between;background:var(--charcoal);border-radius:var(--radius-sm);padding:20px 24px;margin-top:18px}
+.total-label{font-size:16px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:1px}
+.total-amount{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold-light)}
+.payment-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
+.pay-btn{padding:18px 12px;border:2.5px solid var(--border);border-radius:var(--radius-sm);background:var(--cream);font-family:'Lato',sans-serif;font-size:17px;font-weight:700;color:var(--mid);cursor:pointer;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.pay-btn .pay-icon{font-size:24px}
+.pay-btn.selected{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+.pay-btn .check-badge{position:absolute;top:8px;right:8px;width:22px;height:22px;background:var(--gold);border-radius:50%;color:white;font-size:13px;display:none;align-items:center;justify-content:center;font-weight:900}
+.pay-btn.selected .check-badge{display:flex}
+.pagos-seleccionados{width:100%;margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.pago-item{display:grid;grid-template-columns:1fr 180px 44px;gap:12px;align-items:center;background:var(--gold-bg);border:2px solid var(--gold);border-radius:var(--radius-sm);padding:16px 18px;width:100%}
+.pago-item-label{font-size:18px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:8px}
+.pago-item input{padding:12px 14px;font-size:20px;font-weight:700;border:2px solid var(--border);border-radius:10px;background:white;width:100%}
+.btn-remove-pago{width:44px;height:44px;border:none;background:var(--red-light);color:var(--red);border-radius:10px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.cuotas-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cuotas-item{background:var(--cream);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
+.cuotas-item label{font-size:12px;margin-bottom:4px}
+.cuotas-item select{padding:10px 12px;font-size:16px}
+.balance-bar{display:flex;align-items:center;padding:16px 20px;border-radius:var(--radius-sm);margin-top:12px;font-size:18px;font-weight:700;gap:10px}
+.balance-ok{background:var(--green-light);border:2px solid var(--green);color:var(--green)}
+.balance-error{background:var(--red-light);border:2px solid var(--red);color:var(--red)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;background:var(--cream);border-radius:var(--radius-sm);border:2px solid var(--border);cursor:pointer}
+.toggle-row.active{border-color:var(--gold);background:var(--gold-bg)}
+.toggle-label{font-size:19px;font-weight:700}
+.toggle-switch{width:54px;height:32px;background:var(--light);border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle-switch::after{content:'';position:absolute;width:26px;height:26px;background:white;border-radius:50%;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.toggle-row.active .toggle-switch{background:var(--gold)}
+.toggle-row.active .toggle-switch::after{transform:translateX(22px)}
+#factura-fields{display:none;margin-top:16px}
+#factura-fields.visible{display:block}
+.factura-importe-section{background:var(--blue-light);border:2px solid #90b4d8;border-radius:var(--radius-sm);padding:20px;margin-top:16px}
+.factura-importe-title{font-size:16px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:14px}
+.radio-options{display:flex;flex-direction:column;gap:10px}
+.radio-opt{display:flex;align-items:center;gap:14px;padding:14px 18px;background:white;border:2px solid #c2d7ee;border-radius:var(--radius-sm);cursor:pointer}
+.radio-opt.selected{border-color:var(--blue);background:#daeaf8}
+.radio-opt input[type="radio"]{width:22px;height:22px;accent-color:var(--blue);flex-shrink:0}
+.radio-opt-label{font-size:17px;font-weight:700;color:var(--dark)}
+.radio-opt-sub{font-size:14px;color:var(--mid);font-weight:400}
+.importe-custom-row{display:flex;align-items:center;gap:12px;margin-top:10px;padding:14px 18px;background:white;border:2px solid #c2d7ee;border-radius:var(--radius-sm)}
+.importe-custom-row input{flex:1;padding:12px 16px;font-size:20px;font-weight:700;border:2px solid var(--border);border-radius:10px;width:auto}
+.importe-custom-row label{font-size:15px;font-weight:700;color:var(--blue);white-space:nowrap;margin-bottom:0;text-transform:none;letter-spacing:0}
+.recibo-envio-section{background:var(--green-light);border:2px solid var(--green);border-radius:var(--radius-sm);padding:20px;margin-top:0}
+.recibo-envio-title{font-size:16px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.recibo-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.recibo-opt{display:flex;align-items:center;gap:10px;padding:14px 16px;background:white;border:2px solid #a8d5b5;border-radius:var(--radius-sm);cursor:pointer;font-size:16px;font-weight:700;color:var(--dark)}
+.recibo-opt.selected{border-color:var(--green);background:#c8edda}
+.recibo-opt input[type="radio"]{width:20px;height:20px;accent-color:var(--green);flex-shrink:0}
+.btn-submit{width:100%;padding:24px;background:var(--charcoal);color:var(--cream);border:none;border-radius:var(--radius);font-family:'Playfair Display',serif;font-size:24px;letter-spacing:0.5px;cursor:pointer;margin-top:10px;box-shadow:var(--shadow-md);transition:all 0.2s}
+.btn-submit:active{transform:scale(0.99)}
+.btn-submit.loading{opacity:0.7;pointer-events:none}
+.btn-submit .btn-sub{display:block;font-family:'Lato',sans-serif;font-size:14px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase;margin-top:4px;font-weight:700}
+.btn-ventas{width:100%;padding:18px;background:var(--blue);color:white;border:none;border-radius:var(--radius);font-family:'Lato',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-cc{width:100%;padding:18px;color:white;border:none;border-radius:var(--radius);font-family:'Lato',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
+.modal-overlay.visible{display:flex}
+.modal{background:white;border-radius:var(--radius);padding:44px 36px;text-align:center;max-width:400px;width:100%;box-shadow:var(--shadow-lg)}
+.modal .check{font-size:64px;margin-bottom:18px}
+.modal h2{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:10px}
+.modal p{color:var(--mid);font-size:18px;margin-bottom:8px;line-height:1.5}
+.modal .id-venta{font-size:15px;color:var(--light);font-weight:700;margin-bottom:16px}
+.btn-wa-recibo{width:100%;padding:18px;background:#25D366;color:white;border:none;border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-bottom:12px;text-decoration:none;display:block;text-align:center}
+.btn-nueva{width:100%;padding:20px;background:var(--charcoal);color:var(--cream);border:none;border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:20px;font-weight:700;cursor:pointer}
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.panel-overlay.visible{display:flex}
+.panel{background:var(--cream);border-radius:var(--radius);width:100%;max-width:860px;box-shadow:var(--shadow-lg);margin:auto}
+.panel-header{background:var(--charcoal);border-radius:var(--radius) var(--radius) 0 0;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
+.panel-header h2{font-family:'Playfair Display',serif;color:var(--cream);font-size:22px}
+.btn-cerrar-panel{background:transparent;border:2px solid var(--light);color:var(--light);border-radius:10px;padding:8px 16px;font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer}
+.panel-body{padding:20px}
+.buscar-row{display:flex;gap:10px;margin-bottom:16px}
+.buscar-row input{flex:1;padding:14px 18px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:18px;background:white;outline:none}
+.buscar-row input:focus{border-color:var(--blue)}
+.btn-buscar{padding:14px 20px;background:var(--blue);color:white;border:none;border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer}
+.venta-card{background:white;border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)}
+.venta-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.venta-cliente{font-size:19px;font-weight:700;color:var(--dark)}
+.venta-total{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold)}
+.venta-meta{font-size:14px;color:var(--light);margin-bottom:8px}
+.venta-tag{display:inline-block;background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:3px 10px;font-size:13px;font-weight:700;margin:2px}
+.venta-tag.pago{background:var(--blue-light);color:var(--blue);border-color:#90b4d8}
+.venta-tag.item{background:var(--green-light);color:var(--green);border-color:var(--green)}
+.venta-tag.anulada{background:var(--red-light);color:var(--red);border-color:var(--red)}
+.btn-anular{padding:10px 18px;background:var(--red-light);color:var(--red);border:2px solid var(--red);border-radius:10px;font-family:'Lato',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px}
+.loading-msg{text-align:center;padding:40px;color:var(--mid);font-size:18px}
+.cc-cliente-card{background:white;border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)}
+.cc-cliente-card.vencido{border-color:var(--red);background:var(--red-light)}
+.cc-nombre{font-size:19px;font-weight:700;color:var(--dark);margin-bottom:8px}
+.cc-row{display:flex;justify-content:space-between;font-size:15px;color:var(--mid);margin-bottom:4px}
+.cc-saldo-vencido{font-family:'Playfair Display',serif;font-size:20px;color:var(--red);font-weight:700}
+.cc-saldo-ok{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+.btn-wa-cc{display:inline-block;margin-top:10px;padding:10px 18px;background:#25D366;color:white;border:none;border-radius:10px;font-family:'Lato',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none}
+.msg-cc{padding:14px 18px;border-radius:var(--radius-sm);font-size:16px;font-weight:700;margin-bottom:14px;display:none}
+.msg-cc.ok{background:var(--green-light);border:2px solid var(--green);color:var(--green);display:block}
+.msg-cc.error{background:var(--red-light);border:2px solid var(--red);color:var(--red);display:block}
+@media(max-width:540px){.row-2{grid-template-columns:1fr}.items-header,.item-row{grid-template-columns:54px 1fr 90px 90px 44px}.pago-item{grid-template-columns:1fr 130px 44px}.total-amount{font-size:28px}.cuotas-row{grid-template-columns:1fr}.recibo-options{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Hamilton Deco</h1><div class="header-sub">Sistema de Caja</div></div>
+  <div><div id="clock"></div><div id="fecha-display"></div></div>
+</header>
+<div class="container">
+  <div class="card">
+    <div class="card-title"><div class="icon">🧾</div>Datos del Recibo<span class="recibo-badge" id="recibo-num">Nº —</span></div>
+    <div class="row-2">
+      <div class="field"><label>Fecha</label><input type="text" id="fecha" readonly></div>
+      <div class="field"><label>Hora</label><input type="text" id="hora" readonly></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">👤</div>Datos del Cliente</div>
+    <div class="field">
+      <label>Nombre completo</label>
+      <input type="text" id="cliente-nombre" placeholder="Ej: MARIA GARCIA" autocomplete="off">
+      <div class="field-hint">Solo letras mayúsculas · Se convierte automáticamente</div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Email <span style="color:var(--light);font-weight:400">(opcional)</span></label>
+        <input type="email" id="cliente-email" placeholder="nombre@gmail.com" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Teléfono <span style="color:var(--light);font-weight:400">(opcional)</span></label>
+        <div class="tel-row">
+          <div class="tel-prefix"><input type="text" id="tel-prefix" value="+54" maxlength="4" autocomplete="off"></div>
+          <div class="tel-main"><input type="tel" id="cliente-tel" placeholder="3416854285" autocomplete="off"></div>
+        </div>
+        <div class="field-hint">Sin 0 ni 15 · Solo números</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">🪞</div>Detalle de Productos</div>
+    <div class="items-header"><span>Cant.</span><span>Descripción</span><span>P. Unit.</span><span>Subtotal</span><span></span></div>
+    <div id="items-container"></div>
+    <button class="btn-add-item" id="btn-add-item">＋ Agregar producto</button>
+    <div class="total-bar"><span class="total-label">Total Venta</span><span class="total-amount" id="total-display">$ 0</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">💳</div>Formas de Pago</div>
+    <p style="font-size:17px;color:var(--mid);margin-bottom:16px;font-weight:700">Podés seleccionar más de una forma de pago</p>
+    <div class="payment-grid">
+      <button class="pay-btn" data-metodo="EFECTIVO" data-icon="💵"><span class="pay-icon">💵</span>Efectivo<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="TRANSFERENCIA" data-icon="📲"><span class="pay-icon">📲</span>Transferencia<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="MERCADO_PAGO" data-icon="🔵"><span class="pay-icon">🔵</span>Mercado Pago<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="VISA_DEBITO" data-icon="💳"><span class="pay-icon">💳</span>Visa Débito<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="MASTERCARD_DEBITO" data-icon="💳"><span class="pay-icon">💳</span>Master Débito<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="CABAL_DEBITO" data-icon="💳"><span class="pay-icon">💳</span>Cabal Débito<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="VISA_CREDITO" data-icon="💳"><span class="pay-icon">💳</span>Visa Crédito<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="MASTERCARD_CREDITO" data-icon="💳"><span class="pay-icon">💳</span>Master Crédito<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="CABAL_CREDITO" data-icon="💳"><span class="pay-icon">💳</span>Cabal Crédito<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="AMEX" data-icon="💳"><span class="pay-icon">💳</span>Amex<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="QR_PAYWAY" data-icon="🔷"><span class="pay-icon">🔷</span>QR Payway<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="LINK_PAGO" data-icon="🔗"><span class="pay-icon">🔗</span>Link de Pago<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="DOLARES" data-icon="💲"><span class="pay-icon">💲</span>Dólares<div class="check-badge">✓</div></button>
+      <button class="pay-btn" data-metodo="CUENTA_CORRIENTE" data-icon="📒"><span class="pay-icon">📒</span>Cuenta Corriente<div class="check-badge">✓</div></button>
+    </div>
+    <div class="pagos-seleccionados" id="pagos-seleccionados"></div>
+    <div id="cuotas-section" style="display:none;margin-top:14px"><div id="cuotas-container" class="cuotas-row"></div></div>
+    <div id="balance-bar" class="balance-bar balance-ok" style="display:none"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">📨</div>Enviar Recibo al Cliente</div>
+    <div class="recibo-envio-section">
+      <div class="recibo-envio-title">📨 ¿Cómo enviamos el recibo?</div>
+      <div class="recibo-options">
+        <label class="recibo-opt selected" id="recibo-no"><input type="radio" name="envio-recibo" value="NO" checked><span>🚫 No enviar</span></label>
+        <label class="recibo-opt" id="recibo-email"><input type="radio" name="envio-recibo" value="EMAIL"><span>📧 Email</span></label>
+        <label class="recibo-opt" id="recibo-wa"><input type="radio" name="envio-recibo" value="WHATSAPP"><span>📲 WhatsApp</span></label>
+        <label class="recibo-opt" id="recibo-ambos"><input type="radio" name="envio-recibo" value="AMBOS"><span>📧+📲 Ambos</span></label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">📄</div>Facturación ARCA</div>
+    <div class="toggle-row" id="factura-toggle"><span class="toggle-label">¿El cliente requiere factura?</span><div class="toggle-switch"></div></div>
+    <div id="factura-fields">
+      <div class="field" style="margin-top:18px">
+        <label>CUIT / DNI</label>
+        <input type="text" id="cuit" placeholder="20-12345678-9" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Razón Social</label>
+        <input type="text" id="razon-social" placeholder="EJ: GARCIA MARIA O EMPRESA SRL" autocomplete="off">
+      </div>
+      <div class="field"><label>Enviar factura por</label><select id="envio-factura"><option value="EMAIL">Email</option><option value="WHATSAPP">WhatsApp</option><option value="AMBOS">Ambos</option></select></div>
+      <div class="factura-importe-section">
+        <div class="factura-importe-title">💡 ¿Qué importe se factura en ARCA?</div>
+        <div class="radio-options">
+          <label class="radio-opt selected" id="opt-total-venta"><input type="radio" name="importe-factura" value="TOTAL_VENTA" checked><div><div class="radio-opt-label">Total de la venta</div><div class="radio-opt-sub" id="opt-total-venta-sub">$ 0</div></div></label>
+          <label class="radio-opt" id="opt-solo-tarjeta"><input type="radio" name="importe-factura" value="SOLO_TARJETA"><div><div class="radio-opt-label">Solo el monto de tarjeta</div><div class="radio-opt-sub" id="opt-solo-tarjeta-sub">Aplica en pagos mixtos con efectivo</div></div></label>
+          <label class="radio-opt" id="opt-personalizado"><input type="radio" name="importe-factura" value="PERSONALIZADO"><div><div class="radio-opt-label">Importe personalizado</div><div class="radio-opt-sub">Ingresá el monto exacto</div></div></label>
+        </div>
+        <div class="importe-custom-row" id="importe-custom-row" style="display:none">
+          <label>$ Importe a facturar:</label>
+          <input type="number" id="importe-personalizado" placeholder="0" min="0">
+        </div>
+        <div style="margin-top:14px;padding:14px 18px;background:white;border-radius:10px;border:2px solid #90b4d8">
+          <span style="font-size:16px;font-weight:700;color:var(--blue)">Importe a facturar en ARCA: </span>
+          <span style="font-size:24px;font-weight:900;color:var(--blue)" id="importe-factura-final">$ 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">📝</div>Observaciones <span style="color:var(--light);font-size:14px;font-weight:400">(opcional)</span></div>
+    <div class="field" style="margin-bottom:0"><input type="text" id="observaciones" placeholder="Notas adicionales de la venta..."></div>
+  </div>
+  <button class="btn-submit" id="btn-submit">Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span></button>
+  <button class="btn-ventas" id="btn-ver-ventas">🔍 &nbsp;Ver últimas ventas</button>
+  <button class="btn-cc" id="btn-pago-cc" style="background:var(--green)">📒 &nbsp;Registrar Pago CC</button>
+  <button class="btn-cc" id="btn-consultar-cc" style="background:var(--blue)">📊 &nbsp;Consultar CC</button>
+</div>
+
+<!-- MODAL ÉXITO VENTA -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="check">✅</div><h2>¡Venta registrada!</h2>
+    <p id="modal-resumen"></p>
+    <div class="id-venta" id="modal-id"></div>
+    <div id="modal-wa-section" style="display:none;margin-bottom:12px">
+      <a id="btn-wa-recibo" href="#" target="_blank" class="btn-wa-recibo">📲 Enviar recibo por WhatsApp</a>
+    </div>
+    <button class="btn-nueva" id="btn-nueva-venta">Nueva Venta</button>
+  </div>
+</div>
+
+<!-- MODAL ÉXITO PAGO CC -->
+<div class="modal-overlay" id="modal-pago-cc">
+  <div class="modal">
+    <div class="check">✅</div>
+    <h2>¡Pago registrado!</h2>
+    <p id="modal-pago-cc-texto" style="margin-bottom:24px"></p>
+    <button class="btn-nueva" id="btn-ok-pago-cc">OK</button>
+  </div>
+</div>
+
+<!-- PANEL VER VENTAS -->
+<div class="panel-overlay" id="panel-overlay">
+  <div class="panel">
+    <div class="panel-header"><h2>🔍 Últimas Ventas</h2><button class="btn-cerrar-panel" id="btn-cerrar-ventas">Cerrar ✕</button></div>
+    <div class="panel-body">
+      <div class="buscar-row">
+        <input type="text" id="buscar-cliente" placeholder="Buscar por nombre de cliente..." autocomplete="off">
+        <button class="btn-buscar" id="btn-buscar-ventas">Buscar</button>
+      </div>
+      <div id="ventas-lista"><div class="loading-msg">Tocá Buscar para cargar las últimas ventas</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL PAGO CC -->
+<div class="panel-overlay" id="panel-pago-cc">
+  <div class="panel">
+    <div class="panel-header"><h2>📒 Registrar Pago CC</h2><button class="btn-cerrar-panel" id="btn-cerrar-pago-cc">Cerrar ✕</button></div>
+    <div class="panel-body">
+      <div id="msg-pago-cc" class="msg-cc"></div>
+      <div class="field"><label>Cliente</label>
+        <select id="cc-cliente-sel" style="width:100%;padding:16px 18px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Lato',sans-serif;font-size:18px;color:var(--charcoal);background:var(--cream);-webkit-appearance:none">
+          <option value="">— Cargando clientes... —</option>
+        </select>
+      </div>
+      <div id="cc-info-cliente" style="display:none;background:var(--gold-bg);border:2px solid var(--gold);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:16px;font-size:16px;font-weight:700;color:var(--dark)"></div>
+      <div class="field"><label>Monto a Pagar ($)</label>
+        <input type="number" id="cc-monto" placeholder="0.00" min="0.01" step="0.01">
+      </div>
+      <button class="btn-submit" id="btn-registrar-pago-cc">Registrar Pago CC<span class="btn-sub">Imputar contra deudas activas</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL CONSULTAR CC -->
+<div class="panel-overlay" id="panel-consultar-cc">
+  <div class="panel">
+    <div class="panel-header"><h2>📊 Cuentas Corrientes</h2><button class="btn-cerrar-panel" id="btn-cerrar-consultar-cc">Cerrar ✕</button></div>
+    <div class="panel-body">
+      <div class="buscar-row">
+        <input type="text" id="cc-buscar-nombre" placeholder="Buscar por nombre o dejar vacío para ver todos..." autocomplete="off">
+        <button class="btn-buscar" id="btn-filtrar-cc">Filtrar</button>
+      </div>
+      <div id="cc-listado-container"><div class="loading-msg">Cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var pagosSeleccionados={},requiereFactura=false,itemCount=0,_listadoCC=[];
+var METODO_LABELS={EFECTIVO:'Efectivo',TRANSFERENCIA:'Transferencia',MERCADO_PAGO:'Mercado Pago',VISA_DEBITO:'Visa Débito',MASTERCARD_DEBITO:'Master Débito',CABAL_DEBITO:'Cabal Débito',VISA_CREDITO:'Visa Crédito',MASTERCARD_CREDITO:'Master Crédito',CABAL_CREDITO:'Cabal Crédito',AMEX:'Amex',QR_PAYWAY:'QR Payway',LINK_PAGO:'Link de Pago',DOLARES:'Dólares',CUENTA_CORRIENTE:'Cuenta Corriente'};
+var CREDITO_METODOS=['VISA_CREDITO','MASTERCARD_CREDITO','CABAL_CREDITO','AMEX'];
+
+function updateClock(){var n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('fecha-display').textContent=n.toLocaleDateString('es-AR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});document.getElementById('fecha').value=n.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});document.getElementById('hora').value=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function tickClock(){updateClock();setTimeout(tickClock,1000);}
+function genReciboNum(){var now=new Date();var ts=now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0')+String(now.getSeconds()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*900)+100);document.getElementById('recibo-num').textContent='Nº '+ts;return ts;}
+var currentReciboNum=genReciboNum();
+function getTelCompleto(){var prefix=document.getElementById('tel-prefix').value.trim().replace(/\D/g,'');var num=document.getElementById('cliente-tel').value.trim().replace(/\D/g,'');if(!num)return '';return prefix+num;}
+function normalizarDesc(el){var pos=el.selectionStart;el.value=el.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 .,\-\/]/g,'');el.setSelectionRange(pos,pos);}
+function getTotalVenta(){var t=0;document.querySelectorAll('.item-row').forEach(function(r){var id=r.id;var c=parseFloat(document.getElementById(id+'-cant').value)||0;var p=parseFloat(document.getElementById(id+'-precio').value)||0;t+=c*p;});return t;}
+function calcTotal(){var t=0;document.querySelectorAll('.item-row').forEach(function(r){var id=r.id;var c=parseFloat(document.getElementById(id+'-cant').value)||0;var p=parseFloat(document.getElementById(id+'-precio').value)||0;var s=c*p;var se=document.getElementById(id+'-sub');if(se)se.value=s>0?s.toLocaleString('es-AR'):'';t+=s;});document.getElementById('total-display').textContent='$ '+t.toLocaleString('es-AR',{minimumFractionDigits:0});document.getElementById('opt-total-venta-sub').textContent='$ '+t.toLocaleString('es-AR',{minimumFractionDigits:0});var keys=Object.keys(pagosSeleccionados);if(keys.length===1){var el=document.getElementById('pago-importe-'+keys[0]);if(el)el.value=t||'';}updateBalance();updateImporteFactura();return t;}
+function addItem(){itemCount++;var id='item-'+itemCount;var div=document.createElement('div');div.className='item-row';div.id=id;div.innerHTML='<input type="number" min="1" value="1" id="'+id+'-cant" style="text-align:center"><input type="text" placeholder="Descripción" id="'+id+'-desc" autocomplete="off"><input type="number" min="0" placeholder="Precio" id="'+id+'-precio"><input type="number" placeholder="0" id="'+id+'-sub" readonly style="background:#f0ede8;color:var(--mid);text-align:right"><button class="btn-remove" data-item="'+id+'">×</button>';document.getElementById('items-container').appendChild(div);document.getElementById(id+'-cant').addEventListener('input',calcTotal);document.getElementById(id+'-precio').addEventListener('input',calcTotal);document.getElementById(id+'-desc').addEventListener('input',function(){normalizarDesc(this);});div.querySelector('.btn-remove').addEventListener('click',function(){div.remove();calcTotal();});setTimeout(function(){document.getElementById(id+'-desc').focus();},50);}
+function togglePago(btn){var metodo=btn.getAttribute('data-metodo');var icon=btn.getAttribute('data-icon');if(pagosSeleccionados[metodo]){delete pagosSeleccionados[metodo];btn.classList.remove('selected');}else{pagosSeleccionados[metodo]={icon:icon,importe:0};btn.classList.add('selected');}renderPagosSeleccionados();updateBalance();updateImporteFactura();}
+function renderPagosSeleccionados(){var container=document.getElementById('pagos-seleccionados');var cuotasContainer=document.getElementById('cuotas-container');var cuotasSection=document.getElementById('cuotas-section');var keys=Object.keys(pagosSeleccionados);if(keys.length===0){container.innerHTML='';cuotasSection.style.display='none';document.getElementById('balance-bar').style.display='none';return;}if(keys.length===1)pagosSeleccionados[keys[0]].importe=getTotalVenta();container.innerHTML=keys.map(function(m){return '<div class="pago-item"><div class="pago-item-label"><span style="font-size:22px">'+pagosSeleccionados[m].icon+'</span>'+METODO_LABELS[m]+'</div><input type="number" min="0" placeholder="$ Importe" value="'+(pagosSeleccionados[m].importe||'')+'" id="pago-importe-'+m+'"><button class="btn-remove-pago" data-quitar="'+m+'">×</button></div>';}).join('');keys.forEach(function(m){var inp=document.getElementById('pago-importe-'+m);if(inp)inp.addEventListener('input',function(){pagosSeleccionados[m].importe=parseFloat(this.value)||0;updateBalance();updateImporteFactura();});var btnQ=container.querySelector('[data-quitar="'+m+'"]');if(btnQ)btnQ.addEventListener('click',function(){delete pagosSeleccionados[m];document.querySelectorAll('.pay-btn').forEach(function(b){if(b.getAttribute('data-metodo')===m)b.classList.remove('selected');});renderPagosSeleccionados();updateBalance();updateImporteFactura();});});var creditoKeys=keys.filter(function(k){return CREDITO_METODOS.indexOf(k)>=0;});if(creditoKeys.length>0){cuotasSection.style.display='block';cuotasContainer.innerHTML=creditoKeys.map(function(m){return '<div class="cuotas-item"><label>'+METODO_LABELS[m]+' — Cuotas</label><select id="cuotas-'+m+'"><option value="1">1 cuota (contado)</option><option value="3">3 cuotas</option><option value="6">6 cuotas</option><option value="12">12 cuotas</option><option value="18">18 cuotas</option><option value="24"><option value="24">24 cuotas</option><option value="MIPYME">Cuotas MiPyME</option></select></div>';
+}).join('');}else{cuotasSection.style.display='none';}document.getElementById('balance-bar').style.display=keys.length>1?'flex':'none';updateBalance();}
+function updateBalance(){var bar=document.getElementById('balance-bar');var keys=Object.keys(pagosSeleccionados);if(keys.length<=1){bar.style.display='none';return;}var totalVenta=getTotalVenta();var totalPagos=keys.reduce(function(acc,m){return acc+(parseFloat((document.getElementById('pago-importe-'+m)||{}).value)||0);},0);bar.style.display='flex';var diff=totalVenta-totalPagos;if(Math.abs(diff)<1){bar.className='balance-bar balance-ok';bar.innerHTML='✅ &nbsp;Los pagos coinciden con el total';}else if(totalPagos<totalVenta){bar.className='balance-bar balance-error';bar.innerHTML='⚠️ &nbsp;Falta: <strong>$ '+diff.toLocaleString('es-AR',{minimumFractionDigits:0})+'</strong>';}else{bar.className='balance-bar balance-error';bar.innerHTML='⚠️ &nbsp;Excede por: <strong>$ '+Math.abs(diff).toLocaleString('es-AR',{minimumFractionDigits:0})+'</strong>';}}
+function updateReciboOpt(){document.querySelectorAll('.recibo-opt').forEach(function(o){o.classList.remove('selected');});var sel=document.querySelector('input[name="envio-recibo"]:checked');if(sel)sel.closest('.recibo-opt').classList.add('selected');}
+function toggleFactura(){requiereFactura=!requiereFactura;document.getElementById('factura-toggle').classList.toggle('active',requiereFactura);document.getElementById('factura-fields').classList.toggle('visible',requiereFactura);if(requiereFactura)updateImporteFactura();}
+function updateImporteFactura(){var sel='TOTAL_VENTA';document.querySelectorAll('input[name="importe-factura"]').forEach(function(r){if(r.checked)sel=r.value;});document.querySelectorAll('.radio-opt').forEach(function(o){o.classList.remove('selected');});var idMap={TOTAL_VENTA:'opt-total-venta',SOLO_TARJETA:'opt-solo-tarjeta',PERSONALIZADO:'opt-personalizado'};if(document.getElementById(idMap[sel]))document.getElementById(idMap[sel]).classList.add('selected');document.getElementById('importe-custom-row').style.display=sel==='PERSONALIZADO'?'flex':'none';recalcImporte();}
+function recalcImporte(){var sel='TOTAL_VENTA';document.querySelectorAll('input[name="importe-factura"]').forEach(function(r){if(r.checked)sel=r.value;});var totalVenta=getTotalVenta();var importe=0;if(sel==='TOTAL_VENTA'){importe=totalVenta;}else if(sel==='SOLO_TARJETA'){['VISA_DEBITO','MASTERCARD_DEBITO','CABAL_DEBITO','VISA_CREDITO','MASTERCARD_CREDITO','CABAL_CREDITO','AMEX'].forEach(function(m){if(pagosSeleccionados[m])importe+=parseFloat((document.getElementById('pago-importe-'+m)||{}).value)||0;});document.getElementById('opt-solo-tarjeta-sub').textContent=importe>0?'$ '+importe.toLocaleString('es-AR',{minimumFractionDigits:0}):'Sin tarjeta seleccionada';}else{importe=parseFloat(document.getElementById('importe-personalizado').value)||0;}document.getElementById('importe-factura-final').textContent='$ '+importe.toLocaleString('es-AR',{minimumFractionDigits:0});}
+function validarCampos(){var nombre=document.getElementById('cliente-nombre').value.trim();var email=document.getElementById('cliente-email').value.trim();var tel=document.getElementById('cliente-tel').value.trim().replace(/\D/g,'');document.querySelectorAll('.error').forEach(function(el){el.classList.remove('error');});if(!nombre){alert('⚠️ El nombre del cliente es obligatorio.');document.getElementById('cliente-nombre').classList.add('error');document.getElementById('cliente-nombre').focus();return false;}if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('⚠️ El email no tiene un formato válido.');document.getElementById('cliente-email').classList.add('error');return false;}if(tel&&(tel.length<10||tel.length>13)){alert('⚠️ El teléfono debe tener entre 10 y 13 dígitos.');document.getElementById('cliente-tel').classList.add('error');return false;}if(requiereFactura){var cuit=document.getElementById('cuit').value.trim().replace(/\D/g,'');var razon=document.getElementById('razon-social').value.trim();var envF=document.getElementById('envio-factura').value;if(!cuit){alert('⚠️ El CUIT/DNI es obligatorio para facturar.');document.getElementById('cuit').classList.add('error');return false;}if(cuit.length!==8&&cuit.length!==11){alert('⚠️ El CUIT debe tener 11 dígitos o el DNI 8 dígitos.');document.getElementById('cuit').classList.add('error');return false;}if(!razon){alert('⚠️ La Razón Social es obligatoria para facturar.');document.getElementById('razon-social').classList.add('error');return false;}if((envF==='EMAIL'||envF==='AMBOS')&&!email){alert('⚠️ Ingresá el email para enviar la factura.');document.getElementById('cliente-email').classList.add('error');return false;}if((envF==='WHATSAPP'||envF==='AMBOS')&&!tel){alert('⚠️ Ingresá el teléfono para enviar la factura por WhatsApp.');document.getElementById('cliente-tel').classList.add('error');return false;}}var envR=document.querySelector('input[name="envio-recibo"]:checked').value||'NO';if((envR==='EMAIL'||envR==='AMBOS')&&!email){alert('⚠️ Ingresá el email para enviar el recibo.');document.getElementById('cliente-email').classList.add('error');return false;}if((envR==='WHATSAPP'||envR==='AMBOS')&&!tel){alert('⚠️ Ingresá el teléfono para enviar el recibo por WhatsApp.');document.getElementById('cliente-tel').classList.add('error');return false;}return true;}
+function submitVenta(){if(!validarCampos())return;var keys=Object.keys(pagosSeleccionados);if(keys.length===0){alert('Por favor seleccioná al menos una forma de pago.');return;}var items=[],total=0,itemIncompleto=false;document.querySelectorAll('.item-row').forEach(function(r){var id=r.id;var c=parseFloat(document.getElementById(id+'-cant').value)||0;var d=document.getElementById(id+'-desc').value.trim();var p=parseFloat(document.getElementById(id+'-precio').value)||0;if(!d||p===0){itemIncompleto=true;return;}items.push({descripcion:d,cantidad:c,precioUnitario:p,subtotal:c*p});total+=c*p;});if(itemIncompleto){alert('⚠️ Completá la descripción y el precio de todos los productos.');return;}if(items.length===0){alert('⚠️ Agregá al menos un producto.');return;}if(keys.length>1){var tp=keys.reduce(function(acc,m){return acc+(parseFloat((document.getElementById('pago-importe-'+m)||{}).value)||0);},0);if(Math.abs(total-tp)>=1){if(!confirm('⚠️ Los pagos no coinciden.\nTotal venta: $'+total.toLocaleString('es-AR')+'\nTotal pagos: $'+tp.toLocaleString('es-AR')+'\n\n¿Confirmar igual?'))return;}}var formaPago='EFECTIVO',montoEfectivo=0,montoTarjeta=0,montoCC=0;if(keys.length===1){var m=keys[0];if(m==='CUENTA_CORRIENTE'){formaPago='CC';montoCC=total;}else if(m==='EFECTIVO'||m==='DOLARES'){formaPago='EFECTIVO';montoEfectivo=total;}else{formaPago='TARJETA';montoTarjeta=total;}}else{formaPago='MIXTO';keys.forEach(function(m){var imp=parseFloat((document.getElementById('pago-importe-'+m)||{}).value)||0;if(m==='CUENTA_CORRIENTE')montoCC+=imp;else if(m==='EFECTIVO'||m==='DOLARES')montoEfectivo+=imp;else montoTarjeta+=imp;});}var sel='TOTAL_VENTA';document.querySelectorAll('input[name="importe-factura"]').forEach(function(r){if(r.checked)sel=r.value;});var importeFinal=parseFloat(document.getElementById('importe-factura-final').textContent.replace(/[^0-9,.]/g,'').replace('.','').replace(',','.'))||total;var envR=document.querySelector('input[name="envio-recibo"]:checked').value||'NO';var telCompleto=getTelCompleto();var payload={accion:'registrarVenta',nombreCliente:document.getElementById('cliente-nombre').value.trim(),telCliente:telCompleto,emailCliente:document.getElementById('cliente-email').value.trim(),total:total,formaPago:formaPago,montoEfectivo:montoEfectivo,montoTarjeta:montoTarjeta,montoCC:montoCC,envioRecibo:envR,factura:requiereFactura?'SI':'NO',tipoEnvioFact:requiereFactura?document.getElementById('envio-factura').value:'',notas:document.getElementById('observaciones').value.trim(),cuit:requiereFactura?document.getElementById('cuit').value.trim():'',razonSocial:requiereFactura?document.getElementById('razon-social').value.trim():'',importeFactura:importeFinal,importeFacturaTipo:sel,pagosDetalle:JSON.stringify(keys.map(function(m){return {metodo:m,importe:parseFloat((document.getElementById('pago-importe-'+m)||{}).value)||0,cuotas:document.getElementById('cuotas-'+m)?document.getElementById('cuotas-'+m).value:'1'};})),items:items,};var btn=document.getElementById('btn-submit');btn.classList.add('loading');btn.textContent='Guardando...';google.script.run.withSuccessHandler(function(jsonStr){var res=JSON.parse(jsonStr);if(res.ok){var pagosLabels=keys.map(function(m){return METODO_LABELS[m]+' $'+Number(pagosSeleccionados[m].importe).toLocaleString('es-AR');}).join(' + ');document.getElementById('modal-resumen').innerHTML='<strong>'+payload.nombreCliente+'</strong><br>$ '+Number(total).toLocaleString('es-AR')+'<br><span style="font-size:15px;color:var(--mid)">'+pagosLabels+'</span>';document.getElementById('modal-id').textContent='ID Venta: '+(res.idVenta||'')+' · Recibo: '+(res.idRecibo||'');var waSection=document.getElementById('modal-wa-section');if((envR==='WHATSAPP'||envR==='AMBOS')&&telCompleto){var msg='Hola '+payload.nombreCliente+'! Gracias por tu compra en Hamilton Deco. Recibo N\u00b0'+res.idRecibo+' \u00b7 $'+Number(total).toLocaleString('es-AR')+' \u00b7 '+document.getElementById('fecha').value+' \u00b7 Necochea 1427, Rosario. \u00a1Hasta pronto!';document.getElementById('btn-wa-recibo').href='https://wa.me/'+telCompleto+'?text='+encodeURIComponent(msg);waSection.style.display='block';}else{waSection.style.display='none';}document.getElementById('modal').classList.add('visible');}else{alert('Error al guardar: '+res.error);btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>';}}).withFailureHandler(function(err){alert('Error: '+err.message);btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>';}).procesarDesdeHTML_V2(JSON.stringify(payload));}
+function nuevaVenta(){document.getElementById('modal').classList.remove('visible');['cliente-nombre','cliente-email','cliente-tel','observaciones','cuit','razon-social','importe-personalizado'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('tel-prefix').value='+54';document.getElementById('items-container').innerHTML='';document.getElementById('total-display').textContent='$ 0';document.querySelectorAll('.pay-btn').forEach(function(b){b.classList.remove('selected');});document.querySelectorAll('.error').forEach(function(el){el.classList.remove('error');});pagosSeleccionados={};document.getElementById('pagos-seleccionados').innerHTML='';document.getElementById('cuotas-section').style.display='none';document.getElementById('balance-bar').style.display='none';requiereFactura=false;document.getElementById('factura-toggle').classList.remove('active');document.getElementById('factura-fields').classList.remove('visible');document.querySelector('input[name="importe-factura"][value="TOTAL_VENTA"]').checked=true;document.querySelector('input[name="envio-recibo"][value="NO"]').checked=true;updateReciboOpt();document.getElementById('importe-factura-final').textContent='$ 0';document.getElementById('opt-total-venta-sub').textContent='$ 0';currentReciboNum=genReciboNum();addItem();window.scrollTo(0,0);var btn=document.getElementById('btn-submit');btn.classList.remove('loading');btn.innerHTML='Registrar Venta<span class="btn-sub">Guardar en Google Sheets</span>';}
+function cargarVentas(){var buscar=document.getElementById('buscar-cliente').value.trim();var lista=document.getElementById('ventas-lista');lista.innerHTML='<div class="loading-msg">Cargando ventas...</div>';google.script.run.withSuccessHandler(function(jsonStr){var res=JSON.parse(jsonStr);if(!res.ok||!res.ventas||!res.ventas.length){lista.innerHTML='<div class="loading-msg">No se encontraron ventas.</div>';return;}lista.innerHTML=res.ventas.map(function(v){return '<div class="venta-card" id="vc-'+v.idVenta+'"><div class="venta-card-header"><div class="venta-cliente">'+v.nombreCliente+'</div><div class="venta-total">$ '+Number(v.total).toLocaleString('es-AR')+'</div></div><div class="venta-meta">'+v.fecha+' '+v.hora+' · ID: '+v.idVenta+' · Recibo: '+(v.idRecibo||'—')+'</div><div><span class="venta-tag pago">💳 '+v.formaPago+'</span>'+(v.estado==='ANULADA'?'<span class="venta-tag anulada">ANULADA</span>':'')+'</div><div style="margin-top:6px">'+(v.items||[]).map(function(i){return '<span class="venta-tag item">🪞 '+i.descripcion+'</span>';}).join('')+'</div>'+(v.estado!=='ANULADA'?'<button class="btn-anular" data-anular="'+v.idVenta+'">🗑 Anular esta venta</button>':'')+'</div>';}).join('');lista.querySelectorAll('.btn-anular').forEach(function(b){b.addEventListener('click',function(){anularVenta(this.getAttribute('data-anular'));});});}).withFailureHandler(function(){document.getElementById('ventas-lista').innerHTML='<div class="loading-msg">Error al cargar.</div>';}).procesarDesdeHTML_V2(JSON.stringify({accion:'buscarVentas',q:buscar}));}
+function anularVenta(idVenta){if(!confirm('⚠️ Anular la venta '+idVenta+'?\n\nEsta acción marca la venta como ANULADA. No se borra.'))return;google.script.run.withSuccessHandler(function(jsonStr){var res=JSON.parse(jsonStr);if(res.ok){var card=document.getElementById('vc-'+idVenta);if(card){card.style.opacity='0.5';var btnA=card.querySelector('.btn-anular');if(btnA){btnA.textContent='✅ Anulada';btnA.disabled=true;}}alert('✅ Venta anulada correctamente.');}else{alert('Error al anular: '+res.error);}}).withFailureHandler(function(err){alert('Error: '+err.message);}).procesarDesdeHTML_V2(JSON.stringify({accion:'anularVenta',idVenta:idVenta}));}
+function mostrarMsgCC(tipo,texto){var el=document.getElementById('msg-pago-cc');el.className='msg-cc '+tipo;el.textContent=texto;el.style.display='block';}
+function mostrarModalPagoCC(msg){document.getElementById('modal-pago-cc-texto').textContent=msg;document.getElementById('modal-pago-cc').classList.add('visible');}
+function cargarClientesCC(){var sel=document.getElementById('cc-cliente-sel');sel.innerHTML='<option value="">Cargando...</option>';google.script.run.withSuccessHandler(function(jsonStr){var res=JSON.parse(jsonStr);sel.innerHTML='<option value="">— Seleccionar cliente —</option>';if(res.ok&&res.clientes&&res.clientes.length){res.clientes.forEach(function(c){var opt=document.createElement('option');opt.value=c.nombre;opt.textContent=c.nombre+'  —  Saldo: $'+c.saldoTotal.toFixed(2)+(c.tieneVencido?'  ⚠️ VENCIDO':'');sel.appendChild(opt);});}else{sel.innerHTML='<option value="">No hay clientes con CC activa</option>';}}).withFailureHandler(function(){sel.innerHTML='<option value="">Error al cargar</option>';}).procesarDesdeHTML_V2(JSON.stringify({accion:'getClientesCC'}));}
+function cargarListadoCC(){document.getElementById('cc-listado-container').innerHTML='<div class="loading-msg">Cargando...</div>';google.script.run.withSuccessHandler(function(jsonStr){var res=JSON.parse(jsonStr);if(res.ok){_listadoCC=res.listado;renderListadoCC();}else document.getElementById('cc-listado-container').innerHTML='<div class="loading-msg">Error al cargar.</div>';}).withFailureHandler(function(){document.getElementById('cc-listado-container').innerHTML='<div class="loading-msg">Error al cargar.</div>';}).procesarDesdeHTML_V2(JSON.stringify({accion:'getListadoCC'}));}
+function renderListadoCC(){var q=(document.getElementById('cc-buscar-nombre').value||'').toLowerCase().trim();var filtrado=_listadoCC.filter(function(c){return !q||c.nombreCliente.toLowerCase().indexOf(q)>=0;});if(!filtrado.length){document.getElementById('cc-listado-container').innerHTML='<div class="loading-msg">No se encontraron resultados.</div>';return;}document.getElementById('cc-listado-container').innerHTML=filtrado.map(function(c){var v=c.saldoVencido>0;return '<div class="cc-cliente-card'+(v?' vencido':'')+'"><div class="cc-nombre">'+c.nombreCliente+'</div><div class="cc-row"><span>Saldo total:</span><span class="'+(v?'cc-saldo-vencido':'cc-saldo-ok')+'">$ '+Number(c.saldoCCTotal).toFixed(2)+'</span></div><div class="cc-row"><span>Sin vencer:</span><span>$ '+Number(c.saldoSinVencer).toFixed(2)+'</span></div><div class="cc-row"><span>Vencido:</span><span style="font-weight:'+(v?'900':'400')+';color:'+(v?'var(--red)':'inherit')+'">$ '+Number(c.saldoVencido).toFixed(2)+'</span></div>'+(c.diasMoraPromPonderado>0?'<div class="cc-row"><span>Mora promedio:</span><span>'+c.diasMoraPromPonderado+' días</span></div>':'')+(c.linkWhatsApp?'<a href="'+c.linkWhatsApp+'" target="_blank" class="btn-wa-cc">📲 WhatsApp</a>':'')+'</div>';}).join('');}
+
+document.addEventListener('DOMContentLoaded', function(){
+  tickClock();currentReciboNum=genReciboNum();addItem();
+  document.getElementById('cliente-nombre').addEventListener('input',function(){var pos=this.selectionStart;this.value=this.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,'');this.setSelectionRange(pos,pos);this.classList.remove('error');});
+  document.getElementById('razon-social').addEventListener('input',function(){var pos=this.selectionStart;this.value=this.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 .]/g,'');this.setSelectionRange(pos,pos);this.classList.remove('error');});
+  document.getElementById('cliente-tel').addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'');this.classList.remove('error');});
+  document.getElementById('tel-prefix').addEventListener('input',function(){var v=this.value.replace(/[^0-9+]/g,'');if(v&&!v.startsWith('+'))v='+'+v;this.value=v;});
+  document.getElementById('cuit').addEventListener('input',function(){this.value=this.value.replace(/[^0-9\-]/g,'');this.classList.remove('error');});
+  document.getElementById('cliente-email').addEventListener('input',function(){this.classList.remove('error');});
+  document.getElementById('importe-personalizado').addEventListener('input',recalcImporte);
+  document.querySelectorAll('.pay-btn').forEach(function(btn){btn.addEventListener('click',function(){togglePago(this);});});
+  document.querySelectorAll('input[name="envio-recibo"]').forEach(function(r){r.addEventListener('change',updateReciboOpt);});
+  document.getElementById('factura-toggle').addEventListener('click',toggleFactura);
+  document.querySelectorAll('input[name="importe-factura"]').forEach(function(r){r.addEventListener('change',updateImporteFactura);});
+  document.getElementById('btn-add-item').addEventListener('click',addItem);
+  document.getElementById('btn-submit').addEventListener('click',submitVenta);
+  document.getElementById('btn-nueva-venta').addEventListener('click',nuevaVenta);
+  document.getElementById('btn-ver-ventas').addEventListener('click',function(){document.getElementById('panel-overlay').classList.add('visible');cargarVentas();});
+  document.getElementById('btn-cerrar-ventas').addEventListener('click',function(){document.getElementById('panel-overlay').classList.remove('visible');});
+  document.getElementById('btn-buscar-ventas').addEventListener('click',cargarVentas);
+  document.getElementById('btn-pago-cc').addEventListener('click',function(){document.getElementById('panel-pago-cc').classList.add('visible');cargarClientesCC();});
+  document.getElementById('btn-cerrar-pago-cc').addEventListener('click',function(){document.getElementById('panel-pago-cc').classList.remove('visible');});
+  document.getElementById('btn-ok-pago-cc').addEventListener('click',function(){document.getElementById('modal-pago-cc').classList.remove('visible');});
+  document.getElementById('cc-cliente-sel').addEventListener('change',function(){var info=document.getElementById('cc-info-cliente');var opt=this.options[this.selectedIndex];if(this.value&&opt){info.style.display='block';info.textContent=opt.textContent;}else info.style.display='none';});
+  document.getElementById('btn-registrar-pago-cc').addEventListener('click',function(){var nombre=document.getElementById('cc-cliente-sel').value;var monto=parseFloat(document.getElementById('cc-monto').value)||0;if(!nombre){mostrarMsgCC('error','Seleccioná un cliente.');return;}if(monto<=0){mostrarMsgCC('error','El monto debe ser mayor a 0.');return;}mostrarMsgCC('ok','Registrando pago...');google.script.run.withSuccessHandler(function(jsonStr){var res=JSON.parse(jsonStr);if(res.ok){var msg='Pago de $'+monto.toFixed(2)+' registrado correctamente.';if(res.saldoExcedente>0.01)msg+=' Excedente: $'+res.saldoExcedente.toFixed(2);document.getElementById('cc-monto').value='';document.getElementById('cc-cliente-sel').value='';document.getElementById('cc-info-cliente').style.display='none';document.getElementById('msg-pago-cc').style.display='none';cargarClientesCC();mostrarModalPagoCC(msg);}else{mostrarMsgCC('error','Error: '+res.error);}}).withFailureHandler(function(err){mostrarMsgCC('error','Error: '+err.message);}).procesarDesdeHTML_V2(JSON.stringify({accion:'registrarPagoCC',nombreCliente:nombre,montoPagado:monto}));});
+  document.getElementById('btn-consultar-cc').addEventListener('click',function(){document.getElementById('panel-consultar-cc').classList.add('visible');cargarListadoCC();});
+  document.getElementById('btn-cerrar-consultar-cc').addEventListener('click',function(){document.getElementById('panel-consultar-cc').classList.remove('visible');});
+  document.getElementById('btn-filtrar-cc').addEventListener('click',renderListadoCC);
+});
+</script>
+</body>
+</html>
