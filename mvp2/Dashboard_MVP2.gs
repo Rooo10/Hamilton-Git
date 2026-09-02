@@ -15,6 +15,7 @@ var METODOS_DASH = [
   { label: 'Master Crédito',   key: 'MASTERCARD_CREDITO' },
   { label: 'Cabal Crédito',    key: 'CABAL_CREDITO' },
   { label: 'Amex',             key: 'AMEX' },
+  { label: 'Tarjeta Naranja',  key: 'TARJETA_NARANJA' },
   { label: 'Dólares',          key: 'DOLARES' },
   { label: 'Cuenta Corriente', key: 'CUENTA_CORRIENTE' },
 ];
@@ -32,6 +33,7 @@ var COMISION_MAP_D = {
   'MASTERCARD_CREDITO':'COMISION_MASTERCARD_CREDITO',
   'CABAL_CREDITO':'COMISION_CABAL_CREDITO',
   'AMEX':'COMISION_AMEX',
+  'TARJETA_NARANJA':'COMISION_TARJETA_NARANJA',
   'DOLARES':'COMISION_DOLARES',
   'CUENTA_CORRIENTE':'COMISION_CUENTA_CORRIENTE',
 };
@@ -112,7 +114,7 @@ function _leerCC_D(ss) {
 function _leerComisiones_D(ss) {
   var sh = ss.getSheetByName('PARAMETROS');
   if (!sh) return {};
-  var data = sh.getRange('A10:B23').getValues();
+  var data = sh.getRange('A10:B24').getValues();
   var map = {};
   data.forEach(function(r){ if(r[0]) map[r[0]] = parseFloat(r[1]) || 0; });
   return map;
@@ -399,7 +401,10 @@ function diagnosticarVentas() {
 }
 
 // ── QRS: Total $ / Total % / Partida (agregado sobre DASHBOARD) ──
-var FILAS_QRS_D = [7, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 28, 29];
+// ← v2.17: filas actualizadas tras agregar Tarjeta Naranja (15 métodos de pago).
+// Bloque de forma de pago ahora ocupa filas 12-26 (antes 12-25).
+// Comisiones (Total $ / Total neto) se corrieron de 28,29 a 29,30.
+var FILAS_QRS_D = [7, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 29, 30];
 var FILA_TOTAL_VENTAS_QRS = 7;
 
 function _agregarColumnasQRS_D(ss, anio) {

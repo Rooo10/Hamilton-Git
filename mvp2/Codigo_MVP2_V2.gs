@@ -21,10 +21,30 @@ function _forzarFechaTexto_V2(sheet, row, col, valorStr) {
   sheet.getRange(row, col).setNumberFormat('@').setValue(valorStr);
 }
 
+// ← NUEVO v2.18: resuelve la fecha de venta elegida por el operador (opcional).
+// Valida formato estricto YYYY-MM-DD y que sea una fecha real (rechaza ej. 2026-02-30).
+// Si falta o es inválida, hace fallback SILENCIOSO a "now" — nunca bloquea el registro.
+function _resolverFechaVenta_V2(fechaVentaRaw, now) {
+  if (typeof fechaVentaRaw === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fechaVentaRaw)) {
+    const partes = fechaVentaRaw.split("-");
+    const anio = parseInt(partes[0], 10);
+    const mes  = parseInt(partes[1], 10);
+    const dia  = parseInt(partes[2], 10);
+    const fechaDate = new Date(anio, mes - 1, dia, now.getHours(), now.getMinutes(), now.getSeconds());
+    if (fechaDate.getFullYear() === anio && (fechaDate.getMonth() + 1) === mes && fechaDate.getDate() === dia) {
+      return { fechaStr: _fechaStr_V2(fechaDate), fechaDate: fechaDate };
+    }
+  }
+  return { fechaStr: _fechaStr_V2(now), fechaDate: now };
+}
+
 function registrarVenta_V2(data) {
   const ss = SpreadsheetApp.openById(CONFIG_V2.SPREADSHEET_ID);
   const now = new Date();
-  const fechaStr = _fechaStr_V2(now);
+  // ← NUEVO v2.18: fecha de venta editable (opcional). Fallback silencioso a "now" si viene vacía o inválida.
+  const fechaResuelta = _resolverFechaVenta_V2(data.fechaVenta, now);
+  const fechaStr = fechaResuelta.fechaStr;
+  const fechaVentaDate = fechaResuelta.fechaDate;
   const idVenta = _generarId_V2("V");
   const idRecibo = _generarId_V2("R");
 
@@ -115,7 +135,8 @@ function registrarVenta_V2(data) {
   const formaPagoOriginal = data.formaPago || "EFECTIVO";
   if ((formaPagoOriginal === "CC" || formaPagoOriginal === "MIXTO") && montoCC > 0) {
     idCC = _generarId_V2("CC");
-    const fechaVenc = new Date(now.getTime() + CONFIG_V2.PLAZO_PAGO_CC_DIAS * 86400000);
+    // ← v2.18: el vencimiento se calcula desde la fecha de venta elegida, no desde "ahora"
+    const fechaVenc = new Date(fechaVentaDate.getTime() + CONFIG_V2.PLAZO_PAGO_CC_DIAS * 86400000);
     const fechaVencStr = _fechaStr_V2(fechaVenc);
     const shCCNueva = ss.getSheetByName("CC");
     shCCNueva.appendRow([
@@ -605,6 +626,28 @@ function _armarLinkWhatsApp_V2(tel, mensaje) {
   let t = tel.toString().replace(/\D/g, "");
   if (t.length <= 10) t = "549" + t;
   return "https://wa.me/" + t + "?text=" + encodeURIComponent(mensaje);
+}
+
+function doGet(e) {
+  try {
+    const accion = e.parameter.accion;
+    switch (accion) {
+      case "buscarVentas": return _respGet(buscarVentas_V2(e.parameter.q || ""));
+      case "getVenta":     return _respGet(getVenta_V2(e.parameter.id));
+      case "ping":         return _respGet({ ok: true, msg: "MVP2 activo" });
+      default:
+        return HtmlService.createHtmlOutputFromFile("Index_MVP2")
+          .setTitle("Hamilton Deco - Sistema POS")
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    }
+  } catch (err) {
+    return _respGet({ ok: false, error: err.message });
+  }
+}
+
+function _respGet(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function procesarDesdeHTML_V2(jsonStr) {
