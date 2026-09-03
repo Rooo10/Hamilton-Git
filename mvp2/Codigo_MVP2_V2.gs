@@ -661,6 +661,8 @@ function procesarDesdeHTML_V2(jsonStr) {
     case "getListadoCC":    return JSON.stringify(getListadoCC_V2());
     case "buscarVentas":    return JSON.stringify(buscarVentas_V2(data.q || ""));
     case "getVenta":        return JSON.stringify(getVenta_V2(data.idVenta));
+    case "getClientesBase": return JSON.stringify(getClientesBase_V2()); // ← NUEVO
+    case "actualizarClienteBase": return JSON.stringify(actualizarClienteBase_V2(data)); // ← NUEVO
     default: return JSON.stringify({ ok: false, error: "Accion desconocida" });
   }
 }

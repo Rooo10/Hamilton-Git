@@ -436,3 +436,46 @@ function _agregarColumnasQRS_D(ss, anio) {
 
   Logger.log('✅ Columnas Q/R/S actualizadas en DASHBOARD');
 }
+// ← NUEVO: lee base_datos_CLI completa para el dropdown/buscador de clientes
+function getClientesBase_V2() {
+  const ss = SpreadsheetApp.openById(CONFIG_V2.SPREADSHEET_ID);
+  const sh = ss.getSheetByName("base_datos_CLI");
+  if (!sh || sh.getLastRow() < 2) return { ok: true, clientes: [] };
+
+  const datos = sh.getRange(2, 1, sh.getLastRow() - 1, 8).getValues();
+  const clientes = datos
+    .filter(fila => fila[0]) // solo filas con CLIENTE_ID
+    .map(fila => ({
+      clienteId: fila[0],
+      nombre: fila[1] || "",
+      tel: fila[2] || "",
+      email: fila[3] || "",
+      cuit: fila[4] || "",
+      razonSocial: fila[5] || "",
+    }));
+
+  return { ok: true, clientes };
+}
+// ← NUEVO: actualiza tel/email/cuit/razonSocial de un cliente existente por su CLIENTE_ID
+// El Nombre nunca se edita acá — es la clave que usa el proceso diario de matching.
+function actualizarClienteBase_V2(data) {
+  const clienteId = (data.clienteId || "").trim();
+  if (!clienteId) return { ok: false, error: "clienteId requerido" };
+
+  const ss = SpreadsheetApp.openById(CONFIG_V2.SPREADSHEET_ID);
+  const sh = ss.getSheetByName("base_datos_CLI");
+  if (!sh || sh.getLastRow() < 2) return { ok: false, error: "base_datos_CLI vacía o no encontrada" };
+
+  const datos = sh.getDataRange().getValues();
+  for (let i = 1; i < datos.length; i++) {
+    if ((datos[i][0] || "").toString().trim() === clienteId) {
+      const row = i + 1;
+      sh.getRange(row, 3).setValue(data.tel || "");          // C — TEL
+      sh.getRange(row, 4).setValue(data.email || "");        // D — EMAIL
+      sh.getRange(row, 5).setValue(data.cuit || "");         // E — CUIT
+      sh.getRange(row, 6).setValue(data.razonSocial || "");  // F — RAZON_SOCIAL
+      return { ok: true, clienteId, actualizado: true };
+    }
+  }
+  return { ok: false, error: "Cliente no encontrado: " + clienteId };
+}
