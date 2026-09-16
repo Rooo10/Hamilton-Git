@@ -196,6 +196,17 @@ function anularVenta_V2(data) {
   return { ok: true, idVenta, anulada: true };
 }
 
+// ← NUEVO: llama a calcularCierreDiario() (definida en CierreDiario_MVP2.gs,
+// mismo proyecto GAS) sin argumento, para que use la fecha de hoy.
+function cierreDeCajaHTML_V2() {
+  try {
+    var resultado = calcularCierreDiario();
+    return { ok: true, resumen: resultado };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 function registrarPagoCC_V2(data) {
   const nombreCliente = (data.nombreCliente || "").trim();
   const montoPagado = Number(data.montoPagado) || 0;
@@ -273,7 +284,9 @@ function actualizarEstadosCC_V2() {
     const fila = datos[i];
     const estado = (fila[11] || "").toString().trim();
     if (estado !== "SIN_VENCER" && estado !== "VENCIDO") continue;
-    const fechaVenc = new Date(fila[8]); fechaVenc.setHours(0,0,0,0);
+    const fechaVenc = _parsearFechaDDMMYYYY_V2(fila[8]);
+    if (!fechaVenc) { Logger.log('⚠️ Fila ' + (i+1) + ': FECHA_VENCIMIENTO inválida: ' + fila[8]); continue; }
+    fechaVenc.setHours(0,0,0,0);
     const diffDias = Math.floor((hoy - fechaVenc) / 86400000);
     const row = i + 1;
     if (diffDias <= 0) {
@@ -287,6 +300,21 @@ function actualizarEstadosCC_V2() {
     }
   }
   _reconstruirListadoCC_V2(ss);
+}
+
+// ← FIX v2.19: parsea correctamente un string "DD/MM/YYYY" a Date.
+// new Date("dd/mm/yyyy") en JS asume MM/DD/YYYY (formato US) y por eso
+// fallaba con #NUM! (día>12, mes inválido) o calculaba mal en silencio
+// (día≤12, interpretado como mes equivocado).
+function _parsearFechaDDMMYYYY_V2(str) {
+  if (str instanceof Date) return str;
+  const s = (str || '').toString().trim();
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (!m) return null;
+  const dia = parseInt(m[1], 10);
+  const mes = parseInt(m[2], 10);
+  const anio = parseInt(m[3], 10);
+  return new Date(anio, mes - 1, dia);
 }
 
 function onFacturaPendienteEdit_V2(e) {
@@ -661,8 +689,9 @@ function procesarDesdeHTML_V2(jsonStr) {
     case "getListadoCC":    return JSON.stringify(getListadoCC_V2());
     case "buscarVentas":    return JSON.stringify(buscarVentas_V2(data.q || ""));
     case "getVenta":        return JSON.stringify(getVenta_V2(data.idVenta));
-    case "getClientesBase": return JSON.stringify(getClientesBase_V2()); // ← NUEVO
-    case "actualizarClienteBase": return JSON.stringify(actualizarClienteBase_V2(data)); // ← NUEVO
+    case "getClientesBase": return JSON.stringify(getClientesBase_V2());
+    case "actualizarClienteBase": return JSON.stringify(actualizarClienteBase_V2(data));
+    case "cierreDeCaja":    return JSON.stringify(cierreDeCajaHTML_V2()); // ← NUEVO
     default: return JSON.stringify({ ok: false, error: "Accion desconocida" });
   }
 }
