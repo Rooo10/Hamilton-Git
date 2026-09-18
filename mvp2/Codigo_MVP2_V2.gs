@@ -196,16 +196,6 @@ function anularVenta_V2(data) {
   return { ok: true, idVenta, anulada: true };
 }
 
-// ← NUEVO: llama a calcularCierreDiario() (definida en CierreDiario_MVP2.gs,
-// mismo proyecto GAS) sin argumento, para que use la fecha de hoy.
-function cierreDeCajaHTML_V2() {
-  try {
-    var resultado = calcularCierreDiario();
-    return { ok: true, resumen: resultado };
-  } catch (err) {
-    return { ok: false, error: err.message };
-  }
-}
 
 function registrarPagoCC_V2(data) {
   const nombreCliente = (data.nombreCliente || "").trim();
@@ -691,7 +681,8 @@ function procesarDesdeHTML_V2(jsonStr) {
     case "getVenta":        return JSON.stringify(getVenta_V2(data.idVenta));
     case "getClientesBase": return JSON.stringify(getClientesBase_V2());
     case "actualizarClienteBase": return JSON.stringify(actualizarClienteBase_V2(data));
-    case "cierreDeCaja":    return JSON.stringify(cierreDeCajaHTML_V2()); // ← NUEVO
+    case "cierreDeCaja":    return JSON.stringify(cierreDeCajaHTML_V2());
+    case "getUltimoCierre": return JSON.stringify(getUltimoCierreHTML_V2());
     default: return JSON.stringify({ ok: false, error: "Accion desconocida" });
   }
 }

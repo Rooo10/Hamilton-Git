@@ -362,10 +362,30 @@ function test_calcularCierreDiario() {
 // VENTAS_DIARIAS: Tabla Mensual + Tabla Diaria por forma de pago
 // ============================================================
 
+// ← v2.22: ubica las 2 tablas de VENTAS_DIARIAS por su encabezado (la celda "Mes" de la
+// columna B) para NO depender de números de fila fijos. Así se pueden borrar o insertar
+// filas arriba de las tablas sin romper nada.
+// Devuelve { filaMensual, filaDiaria } = primera fila de DATOS de cada tabla, o null si no las encuentra.
+function _ubicarTablas_VD(sh) {
+  var ultima = sh.getLastRow();
+  if (ultima < 1) return null;
+  var colB = sh.getRange(1, 2, ultima, 1).getValues();
+  var encabezados = [];
+  for (var i = 0; i < colB.length; i++) {
+    if (String(colB[i][0]).trim().toLowerCase() === 'mes') encabezados.push(i + 1);
+  }
+  if (encabezados.length < 2) return null;
+  return { filaMensual: encabezados[0] + 1, filaDiaria: encabezados[1] + 1 };
+}
+
 function completarVentasDiarias_VD() {
   var ss = SpreadsheetApp.openById(SS_ID_CIERRE);
   var sh = ss.getSheetByName('VENTAS_DIARIAS');
   if (!sh) { Logger.log('❌ No existe la hoja VENTAS_DIARIAS'); return; }
+
+  var pos = _ubicarTablas_VD(sh);
+  if (!pos) { Logger.log('❌ No encontré los 2 encabezados "Mes" (columna B) de las tablas en VENTAS_DIARIAS'); return; }
+  var nMetodos = METODOS_DASH.length;
 
   var pagos = _leerHoja_CD(ss, 'PAGOS', 8);
   var mensual = {};
@@ -386,14 +406,16 @@ function completarVentasDiarias_VD() {
     diario[key][metodo] = (diario[key][metodo] || 0) + monto;
   });
 
+  // Tabla Mensual: 12 filas debajo de su encabezado
   for (var i = 0; i < 12; i++) {
-    var fila = 18 + i;
+    var fila = pos.filaMensual + i;
     var valoresMes = METODOS_DASH.map(function(mm) { return mensual[i][mm.key] || 0; });
-    sh.getRange(fila, 3, 1, valoresMes.length).setValues([valoresMes]);
-    sh.getRange(fila, 3, 1, valoresMes.length).setNumberFormat('$#,##0');
+    sh.getRange(fila, 3, 1, nMetodos).setValues([valoresMes]);
+    sh.getRange(fila, 3, 1, nMetodos).setNumberFormat('$#,##0');
   }
 
-  var filaInicio = 33;
+  // Tabla Diaria: desde debajo de su encabezado hasta la última fila
+  var filaInicio = pos.filaDiaria;
   var ultimaFila = sh.getLastRow();
   var numFilas = ultimaFila - filaInicio + 1;
   if (numFilas > 0) {
@@ -403,11 +425,12 @@ function completarVentasDiarias_VD() {
       var datosDia = diario[key] || {};
       return METODOS_DASH.map(function(mm) { return datosDia[mm.key] || 0; });
     });
-    sh.getRange(filaInicio, 3, filasAEscribir.length, 15).setValues(filasAEscribir);
-    sh.getRange(filaInicio, 3, filasAEscribir.length, 15).setNumberFormat('$#,##0');
+    sh.getRange(filaInicio, 3, filasAEscribir.length, nMetodos).setValues(filasAEscribir);
+    sh.getRange(filaInicio, 3, filasAEscribir.length, nMetodos).setNumberFormat('$#,##0');
   }
 
-  Logger.log('✅ VENTAS_DIARIAS completada: Tabla Mensual (12 filas) + Tabla Diaria (' + numFilas + ' filas)');
+  Logger.log('✅ VENTAS_DIARIAS completada: Tabla Mensual (filas ' + pos.filaMensual + '-' + (pos.filaMensual + 11) +
+             ') + Tabla Diaria (' + numFilas + ' filas desde la ' + filaInicio + ')');
 }
 
 // ── MIGRACIÓN — correr UNA sola vez ─────────────────────────
