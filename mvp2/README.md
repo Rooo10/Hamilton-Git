@@ -10,7 +10,7 @@ Deploy URL: https://script.google.com/macros/s/AKfycbwW0OK0cOhyGEVFVikeKCA68gfWe
 |---|---|---|
 | `Codigo_MVP2_V2.gs` | v2.23 — rutas `cierreDeCaja` y `getUltimoCierre` en `procesarDesdeHTML_V2`; se quitó la `cierreDeCajaHTML_V2` vieja (ahora vive en `CierrePanel_MVP2.gs`) | 18/09/2026 |
 | `CierreDiario_MVP2.gs` | v2.22 — `completarVentasDiarias_VD` ubica las tablas de `VENTAS_DIARIAS` por su encabezado "Mes" (`_ubicarTablas_VD`), sin números de fila fijos | 18/09/2026 |
-| `CierrePanel_MVP2.gs` | **Nuevo** (v2.22) — backend del panel "Cierre del día": `cierreDeCajaHTML_V2`, `getUltimoCierreHTML_V2` y la foto guardada del cierre | 18/09/2026 |
+| `CierrePanel_MVP2.gs` | **Nuevo** (v2.22) — backend del panel "Cierre del día": `cierreDeCajaHTML_V2`, `getUltimoCierreHTML_V2` y la foto guardada del cierre; además `recalcularCierresDias_CD` para recalcular días pasados | 18/09/2026 |
 | `Index_MVP2.html` | v2.23 — botón y panel "Cierre del día" + ventanas propias en lugar de `alert`/`confirm` | 18/09/2026 |
 | `Dashboard_MVP2.gs` | Sin cambios desde v2.21 | 03/09/2026 |
 | `InitSheet_MVP2_V3.gs` | Sin cambios desde el 31/08 | 03/09/2026 |
@@ -28,6 +28,11 @@ editor de Apps Script, y se probaron en `/dev` y en `/exec`.
 - Cada cálculo guarda una "foto" (indicadores, ítems, pagos y fecha/hora del cálculo) en
   Script Properties, en trozos de 3000 caracteres (`CIERRE_FOTO_N`, `CIERRE_FOTO_0…`).
 - Las ventas anuladas no cuentan en ningún bloque.
+- Recalcular días pasados (solo desde el editor de Apps Script): `recalcularCierresDias_CD(['aaaa-mm-dd', ...])`
+  vuelve a escribir la columna de cada día en `CIERRE_DIARIO` sin tocar ventas ni el bloque de
+  ítems. Una fecha que todavía no tiene columna se agrega al final de la hoja: si ya existe una
+  columna posterior, hay que borrarla antes (se recrea sola al abrir el cierre). Los saldos de
+  CC de esos días quedan con el saldo actual, no con el histórico.
 
 ### Changelog de esta sesión (18/09/2026)
 - v2.22 → Cierre del día: panel en `Index_MVP2.html`, backend nuevo `CierrePanel_MVP2.gs`,
@@ -38,6 +43,8 @@ editor de Apps Script, y se probaron en `/dev` y en `/exec`.
   del navegador: 21 `alert()` y 2 `confirm()` reemplazados.
 - v2.23 → Fix: el cartel "Venta registrada" mostraba "Efectivo $0" si se elegía la forma de
   pago antes de cargar los productos (el importe guardado siempre fue correcto).
+- Recalculados los cierres del 16/09 y del 17/09 con `recalcularCierres_16y17_sept()`: el 16/09
+  se había calculado a la mañana (quedó en $0 pese a $39.000 de pagos) y el 17/09 no tenía columna.
 - (16/09) Fix de días de mora (`_parsearFechaDDMMYYYY_V2`) y ruta `cierreDeCaja`.
 
 ⚠️ `normalizarFechasVentasDiarias_VD` y `agregarTotalVentasDiarias_VD` (migraciones de una

@@ -145,3 +145,32 @@ function test_cierreDeCajaHTML_V2() {
   var r = cierreDeCajaHTML_V2();
   Logger.log(JSON.stringify(r, null, 1).substring(0, 4000));
 }
+
+// ← v2.24: recalcula el cierre de días PASADOS (usa los datos que ya están en VENTAS, PAGOS,
+// ITEMS, etc.). No toca el bloque "Detalle de ítems" (igual que el backfill) ni ninguna venta:
+// solo vuelve a escribir la columna de cada día en CIERRE_DIARIO.
+// fechasKey: lista de fechas como 'yyyy-MM-dd'. Ojo con el orden: una fecha que todavía no
+// tiene columna se agrega al final de la hoja.
+function recalcularCierresDias_CD(fechasKey) {
+  var ss = SpreadsheetApp.openById(SS_ID_CIERRE);
+  var sh = _asegurarHojaCierre_CD(ss);
+  var ventas   = _leerHoja_CD(ss, 'VENTAS', 18);
+  var pagos    = _leerHoja_CD(ss, 'PAGOS', 8);
+  var pagosCC  = _leerHoja_CD(ss, 'PAGOS_CC', 4);
+  var facturas = _leerHoja_CD(ss, 'FACTURAS_PENDIENTES', 15);
+  var items    = _leerHoja_CD(ss, 'ITEMS', 8);
+  var comMap   = _leerComisiones_D(ss);
+  fechasKey.forEach(function(fechaKey) {
+    var p = fechaKey.split('-');
+    var fechaObj = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    var r = _procesarUnDia_CD(sh, fechaObj, fechaKey, ventas, pagos, pagosCC, facturas, items, comMap, false);
+    Logger.log('✅ ' + r.fecha + ' recalculado | Ventas: $' + r.totalVentas + ' (' + r.cantVentas +
+               ') | Pagos por ventas: $' + r.totalPagosVentas + ' | Pagos contra CC: $' + r.totalPagosCC);
+  });
+  SpreadsheetApp.flush();
+}
+
+// Correr desde el editor: recalcula 16/09 y 17/09/2026 (en este orden).
+function recalcularCierres_16y17_sept() {
+  recalcularCierresDias_CD(['2026-09-16', '2026-09-17']);
+}
